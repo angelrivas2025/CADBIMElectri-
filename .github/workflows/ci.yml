@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  validate-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - name: Validar ejemplos contra el esquema
+        run: |
+          python - <<'PY'
+          import json, glob, sys
+          from jsonschema import Draft202012Validator
+          schema = json.load(open("core/model/project.schema.json"))
+          Draft202012Validator.check_schema(schema)
+          v = Draft202012Validator(schema)
+          bad = 0
+          for f in glob.glob("examples/*.json"):
+              errs = list(v.iter_errors(json.load(open(f))))
+              for e in errs:
+                  print(f, e.message); bad += 1
+          sys.exit(1 if bad else 0)
+          PY

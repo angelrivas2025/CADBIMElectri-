@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/angelrivas2025/CADBIMElectri-/core/model/project.schema.json",
+  "title": "Proyecto eléctrico CADBIMElectri",
+  "type": "object",
+  "required": ["schemaVersion", "project", "levels", "rooms", "points", "circuits", "panels"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+    "project": {
+      "type": "object",
+      "required": ["name", "norm", "voltage", "system"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "norm": { "type": "string", "enum": ["NBR5410"] },
+        "voltage": { "type": "number", "exclusiveMinimum": 0, "description": "Tensión fase-neutro en V" },
+        "system": { "type": "string", "enum": ["monofasico", "bifasico", "trifasico"] },
+        "location": { "type": "string" }
+      }
+    },
+    "levels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "elevation"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "elevation": { "type": "number", "description": "Cota en m" }
+        }
+      }
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "level", "name", "type", "polygon"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "level": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["sala", "dormitorio", "cocina", "bano", "servicio", "garaje", "externo", "otro"] },
+          "polygon": {
+            "type": "array",
+            "minItems": 3,
+            "description": "Vértices [x, y] en metros",
+            "items": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+          }
+        }
+      }
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "room", "position", "power"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "enum": ["luminaria", "interruptor", "tug", "tue", "tablero"] },
+          "room": { "type": "string" },
+          "position": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+          "height": { "type": "number", "description": "Altura de montaje en m" },
+          "power": { "type": "number", "minimum": 0, "description": "Potencia en VA" },
+          "circuit": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "circuits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "panel"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["iluminacion", "tug", "tue"] },
+          "panel": { "type": "string" },
+          "phase": { "type": "string", "enum": ["A", "B", "C", "AB", "BC", "AC", "ABC"] }
+        }
+      }
+    },
+    "panels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "level"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "level": { "type": "string" }
+        }
+      }
+    },
+    "routes": { "type": "array", "items": { "type": "object" } },
+    "calc": { "type": "object", "description": "Resultados del motor de cálculo (se rellenan en Fase 2)" },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "author", "action"],
+        "properties": {
+          "timestamp": { "type": "string" },
+          "author": { "type": "string", "enum": ["usuario", "ia"] },
+          "action": { "type": "string" }
+        }
+      }
+    }
+  }
+}
