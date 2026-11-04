@@ -79,14 +79,14 @@ Una herramienta propia, barata y abierta para hacer **proyectos eléctricos resi
                       Repositorio Git (proyectos)
 ```
 
-### Decisiones de stack (a confirmar)
+### Decisiones de stack (aceptadas en ADR 0001 — 2026-11-03)
 - **Núcleo/backend: Python.** Razón: IfcOpenShell, cálculo, generación de PDF/SVG y SDKs de IA son maduros.
 - **Frontend: web (TypeScript + React + SVG/Konva).** Razón: editor gráfico pesado funciona mejor en web que en móvil nativo. *Alternativa:* Flutter Web si prefieres reutilizar tu stack (más trabajo en el editor de dibujo).
 - **IA: API de Claude con tool use**, detrás de una interfaz propia para poder cambiar de modelo.
 - **Persistencia inicial:** archivos en disco/Git. Firebase o similar solo si luego hace falta multiusuario.
 - **Distribución:** primero local/web, luego empaquetar (Docker o desktop con Tauri).
 
-> **Decisión pendiente #1:** Python + web (recomendado) vs. todo Dart/Flutter.
+> **Decisión #1 — aceptada:** Python + web. Flutter descartado. Ver [ADR 0001](docs/decisiones/0001-stack.md).
 
 ---
 
@@ -222,7 +222,7 @@ voltacad/
 
 | Fase | Entregable | Criterio de "hecho" |
 |---|---|---|
-| **0. Fundamentos** | Repo, README, plan, licencia, CI vacío, ADRs de decisiones pendientes | Repo creado y CI verde |
+| **0. Fundamentos** | Repo, README, plan, licencia, CI vacío, ADRs iniciales (stack y licencia) | Repo creado y CI verde |
 | **1. Modelo** | Esquema `project.json` + validación + 2 proyectos de ejemplo | Ejemplos validan contra el esquema |
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
 | **3. Salidas v0** | Cuadro de cargas, unifilar SVG, BOM, PDF | PDF completo de un proyecto de ejemplo |
@@ -247,14 +247,17 @@ voltacad/
 
 ---
 
-## 13. Decisiones pendientes
+## 13. Decisiones
 
-1. Stack: Python + web (recomendado) vs. Flutter.
-2. Licencia del proyecto (MIT/Apache/AGPL) — afecta si se reutiliza algo GPL.
-3. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
-4. ¿Proyecto abierto al público o privado al inicio?
-5. Nombre definitivo.
-6. Cómo se almacenarán las tablas normativas.
+**Resueltas:**
+1. ~~Stack: Python + web vs. Flutter.~~ → Python + web ([ADR 0001](docs/decisiones/0001-stack.md)).
+2. ~~Licencia del proyecto (MIT/Apache/AGPL).~~ → Apache-2.0 ([ADR 0002](docs/decisiones/0002-licencia.md)).
+3. ~~Cómo se almacenarán las tablas normativas.~~ → CSV versionados con procedencia en `core/norms/nbr5410/data/` (ver `SOURCE.md`).
+
+**Pendientes:**
+4. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
+5. ¿Proyecto abierto al público o privado al inicio?
+6. Nombre definitivo.
 
 ---
 

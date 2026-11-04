@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "0.1",
+  "project": {
+    "name": "Casa simple conforme a NBR 5410",
+    "norm": "NBR5410",
+    "voltage": 127,
+    "system": "bifasico",
+    "location": "Ejemplo",
+    "supply": {
+      "type": "aerea",
+      "thunderstorm_days": 60,
+      "exposed_parts": false,
+      "has_lightning_rod": false,
+      "sensitive_equipment": true,
+      "icc_ka": 3
+    }
+  },
+  "levels": [{ "id": "N0", "name": "Planta baja", "elevation": 0 }],
+  "rooms": [
+    { "id": "R1", "level": "N0", "name": "Sala", "type": "sala", "polygon": [[0, 0], [4, 0], [4, 3.5], [0, 3.5]] },
+    { "id": "R2", "level": "N0", "name": "Dormitorio", "type": "dormitorio", "polygon": [[4, 0], [7.5, 0], [7.5, 3.5], [4, 3.5]] },
+    { "id": "R3", "level": "N0", "name": "Cocina", "type": "cocina", "polygon": [[0, 3.5], [4, 3.5], [4, 6.5], [0, 6.5]] }
+  ],
+  "points": [
+    { "id": "P1", "type": "luminaria", "room": "R1", "position": [2, 1.75], "height": 2.6, "power": 220, "circuit": "C1" },
+    { "id": "P2", "type": "luminaria", "room": "R2", "position": [5.75, 1.75], "height": 2.6, "power": 160, "circuit": "C1" },
+    { "id": "P6", "type": "luminaria", "room": "R3", "position": [2, 5], "height": 2.6, "power": 160, "circuit": "C1" },
+    { "id": "P3", "type": "tug", "room": "R1", "position": [0.2, 1.75], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P7", "type": "tug", "room": "R1", "position": [3.8, 1.75], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P8", "type": "tug", "room": "R1", "position": [2, 0.2], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P9", "type": "tug", "room": "R2", "position": [4.2, 1.75], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P10", "type": "tug", "room": "R2", "position": [7.3, 1.75], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P11", "type": "tug", "room": "R2", "position": [5.75, 0.2], "height": 0.3, "power": 100, "circuit": "C2" },
+    { "id": "P4", "type": "tug", "room": "R3", "position": [0.2, 5], "height": 1.1, "power": 600, "circuit": "C3" },
+    { "id": "P12", "type": "tug", "room": "R3", "position": [1.5, 5], "height": 1.1, "power": 600, "circuit": "C3" },
+    { "id": "P13", "type": "tug", "room": "R3", "position": [3, 5], "height": 1.1, "power": 600, "circuit": "C3" },
+    { "id": "P14", "type": "tug", "room": "R3", "position": [3.8, 6.3], "height": 1.1, "power": 100, "circuit": "C3" },
+    { "id": "P5", "type": "tablero", "room": "R1", "position": [0.2, 0.3], "height": 1.5, "power": 0, "circuit": null }
+  ],
+  "circuits": [
+    { "id": "C1", "name": "Iluminación", "type": "iluminacion", "panel": "QD1", "phase": "A",
+      "method": "B1", "length_m": 18, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
+    { "id": "C2", "name": "TUG sala y dormitorio", "type": "tug", "panel": "QD1", "phase": "A",
+      "method": "B1", "length_m": 22, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
+    { "id": "C3", "name": "TUG cocina", "type": "tug", "panel": "QD1", "phase": "B",
+      "method": "B1", "length_m": 16, "n_loaded": 2, "material": "Cu", "insulation": "PVC" }
+  ],
+  "panels": [{ "id": "QD1", "name": "Tablero principal", "level": "N0" }],
+  "routes": [],
+  "calc": {},
+  "history": [{ "timestamp": "2026-11-03T00:00:00Z", "author": "usuario", "action": "Ejemplo conforme a la previsión mínima NBR 5410 9.5.2; valores didácticos, revisar con profesional." }]
+}
