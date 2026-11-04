@@ -22,16 +22,16 @@ puente BIM es IFC.
 
 | Servicio | electroBIM (según folleto) | CADBIMElectri hoy | Objetivo |
 | --- | --- | --- | --- |
-| Red en árbol | Acometida → cuadros → prumadas → cargas | Un tablero y circuitos planos | Fase 3.5 |
-| Subcuadros y prumadas | Sí | No | Fase 3.5 |
+| Red en árbol | Acometida → cuadros → prumadas → cargas | Grafo explícito con subcuadros y prumadas (esquema 0.2) | Implementado |
+| Subcuadros y prumadas | Sí | Sí, en `network` | Implementado |
 | Asociación red ↔ objetos del modelo | Sí, por símbolos | Parcial (puntos y circuitos) | Fase 6 |
-| Ruteo automático de cables | Por conductos, camino más corto | No; longitud declarada | Fase 3.5 (2.5D) |
-| Longitudes de cable | Calculadas del ruteo | Declaradas por circuito | Fase 3.5 |
-| Agrupamiento por proximidad | Actualizado al rutear | Declarado en el proyecto | Fase 3.5 |
-| Ocupación de conductos | Verificación y vista previa | No | Fase 3.5 |
+| Ruteo automático de cables | Por conductos, camino más corto | Dijkstra 2.5D sobre conductos declarados | Implementado |
+| Longitudes de cable | Calculadas del ruteo | Calculadas del ruteo | Implementado |
+| Agrupamiento por proximidad | Actualizado al rutear | Calculado por tramo compartido | Implementado |
+| Ocupación de conductos | Verificación y vista previa | Motor listo; tablas de diámetros pendientes | Parcial |
 | Cálculo y dimensionamiento | Delega en Ampère o red reducida | Propio, NBR 5410 | Ya disponible |
 | Optimización por caída de tensión | Sí | Sí, por circuito | Ya disponible |
-| Tablas por cuadro | Sí, personalizables | Parcial (global) | Fase 3.5 |
+| Tablas por cuadro | Sí, personalizables | CSV/PDF con columna de tablero | Parcial |
 | Tabla general de cables | Sí, por tipo de red | Parcial (BOM) | Fase 3.5 |
 | Redes auxiliares | Datos, EVAC/incendio, TV/SAT | No | Post-MVP |
 | Sincronización con cálculo externo | Ampère | No aplica (motor propio) | — |
@@ -81,6 +81,9 @@ Fecha/versión: 2026-11-04 / versión observada
 | C08 | Red auxiliar de datos o incendio | Reglas de ruteo y ocupación propias |
 | C09 | Exportación BIM y lista de cables | Entidades, propiedades y cantidades |
 | C10 | Cambio de potencia en una carga | Propagación y actualización de tablas |
+
+Estado: C01–C05 están automatizados en `core/tests/test_net.py`; C06–C10 siguen
+pendientes.
 
 ### Evidencia y límites
 

@@ -3,8 +3,10 @@
 Herramienta abierta para proyectos eléctricos residenciales (planta, circuitos,
 unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA por chat.
 
-> Estado: fases 1–3 completas y fase 3.5 en curso (red y ruteo). Aún no es apta
-> para proyectos reales.
+> Estado: fases 1–3 completas y núcleo de la fase 3.5 (red y ruteo 2.5D)
+> implementado. La ocupación de conductos queda como «no verificable» hasta
+> incorporar las tablas de diámetros con procedencia. Aún no es apta para
+> proyectos reales.
 
 ## Principios
 
@@ -25,6 +27,7 @@ unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA p
 | Protecciones | `core/calc/protections.py` | Disyuntor, DR 30 mA y DPS |
 | Demanda | `core/calc/demand.py` | Demanda con factores declarados |
 | Dimensionamiento | `core/calc/sizing.py` | Sección por ampacidad, caída y mínimo normativo |
+| Red y ruteo | `core/net/` | Grafo 2.5D, camino mínimo, longitud y agrupamiento por circuito, ocupación por tramo |
 | Materiales | `core/calc/bom.py` | Lista de cables, protecciones y tableros |
 | Validación integral | `core/calc/validate.py` | Errores y avisos de todo el proyecto |
 | Salidas | `exporters/` | Unifilar SVG, modelo IFC4, cuadro de cargas CSV e informe PDF |
@@ -43,6 +46,13 @@ proyecto = load_project("examples/casa-conforme.json")
 informe = validar_proyecto(proyecto)
 print(informe["ok"], informe["errores"])
 ```
+
+La red es opcional. Si el proyecto declara `network`, el validador rutea cada
+circuito por los tramos declarados, dimensiona con esa longitud y con el
+agrupamiento real, y calcula el alimentador por la ruta `supply → tablero`. Sin
+`network` nada cambia. El detalle queda en `informe["red"]`; la ocupación de
+conductos figura como «no verificable» mientras falten las tablas de diámetros
+con procedencia.
 
 ```bash
 python -m pytest
@@ -79,7 +89,7 @@ o una tabla, el informe lo declara como observación.
 - [core/model/project.schema.json](core/model/project.schema.json): esquema del proyecto.
 - [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
-- [examples/casa-red.json](examples/casa-red.json): variante con red 2.5D (esquema 0.2); valida nodos, tramos y referencias.
+- [examples/casa-red.json](examples/casa-red.json): variante con red 2.5D (esquema 0.2); rutea los circuitos, aplica agrupamiento real y calcula el alimentador por la ruta.
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
 - [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room) y ADR 0004 (red y ruteo 2.5D).
 - [docs/compatibilidad/electrobim.md](docs/compatibilidad/electrobim.md): matriz de paridad y protocolo de pruebas de caja negra.

@@ -21,6 +21,24 @@ método de contraste están en [SOURCE.md](SOURCE.md).
 | `factores_multicamada.csv` | 43 | Varias camadas de circuitos |
 | `factores_enterrado.csv` | 44 | Circuitos enterrados según separación |
 
+## Ocupación de canalizaciones (ADR 0004)
+
+`core/net/occupancy.py` lee tres tablas opcionales para verificar la ocupación de
+conductos y prumadas. **Todavía no están versionadas**: sus valores dependen de la
+designación comercial del conducto y del diámetro exterior del conductor, que no
+salen de la NBR 5410 sino de las normas de producto y del fabricante. Mientras
+falten, la etapa informa «Ocupación no verificable» y no supone valores.
+
+| Archivo | Columnas | Uso |
+| --- | --- | --- |
+| `conductores_diametros.csv` | `material,aislacion,seccion_mm2,diametro_mm` | Área exterior por conductor |
+| `electrodutos_diametros.csv` | `designacion,diametro_interno_mm` | Diámetro interior por medida comercial |
+| `limites_ocupacion.csv` | `n_conductores_min,n_conductores_max,limite_pct` | Límite de ocupación según cantidad de conductores |
+
+Para incorporarlas hace falta una fuente verificable (norma de producto o catálogo
+del fabricante) y el mismo contraste de `SOURCE.md`; recién entonces se agregan a
+esta carpeta y el validador empieza a marcar excesos.
+
 Formato largo, una fila por valor:
 
 ```

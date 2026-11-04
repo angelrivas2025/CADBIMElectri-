@@ -91,9 +91,12 @@ automática de trazados y el ruteo 3D con colisiones quedan fuera de esta fase.
 - Diámetros exteriores de cable, diámetros interiores de conducto y límite de
   ocupación se cargan desde tablas versionadas con procedencia en
   `core/norms/nbr5410/data/` (política del ADR 0002). No se hardcodean valores.
+  Esas tablas dependen de normas de producto y del fabricante; hasta que se
+  incorporen con procedencia verificable, la etapa informa «no verificable».
 - Si falta la tabla o el `trade_size`, la etapa **no puede verificar**: se
-  reporta como error de datos, no como cumple. Cuando el segmento excede el
-  límite se informa el tramo, los circuitos y la siguiente medida comercial.
+  informa como dato no verificable (aviso explícito), nunca se da por cumplido.
+  Cuando el segmento excede el límite se informa el tramo, los circuitos y la
+  siguiente medida comercial como error.
 
 ### 6. Integración con el motor
 
@@ -130,7 +133,19 @@ reescribir el motor cuando se agregue água/esgoto.
 - [x] Cargador: ids, niveles, referencias, supply único, un nodo por tablero y
   por circuito, tramos y regla de riser.
 - [x] Ejemplo `examples/casa-red.json` y tests de esquema/referencias.
-- [ ] `core/net`, ruteo, ocupación y uso en dimensionamiento.
+- [x] `core/net`: grafo 3D, Dijkstra determinista, longitudes y agrupamiento por
+  circuito, ruta `SUP → tablero`.
+- [x] Dimensionamiento con longitud y agrupamiento de red; el BOM hereda las
+  longitudes; el alimentador usa la ruta.
+- [x] Ocupación por tramo con tablas inyectables; exceso informado con la
+  siguiente medida y datos faltantes tratados como «no verificable».
+- [x] Casos C01–C05 automatizados en `core/tests/test_net.py`.
+- [ ] Tablas de diámetros y límites de ocupación con procedencia verificable
+  (norma de producto o catálogo de fabricante). Sin ellas el validador avisa.
+- [ ] Mapeo de nodos y tramos a IFC (puertos y conectividad), fase 6.
+
+`validate` agrega la etapa `red` (rutas, longitudes, agrupamiento y ocupación)
+antes del dimensionamiento y devuelve el detalle en la clave `red`.
 
 ## Alternativas descartadas
 
