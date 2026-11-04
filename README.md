@@ -27,7 +27,7 @@ unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA p
 | Dimensionamiento | `core/calc/sizing.py` | Sección por ampacidad, caída y mínimo normativo |
 | Materiales | `core/calc/bom.py` | Lista de cables, protecciones y tableros |
 | Validación integral | `core/calc/validate.py` | Errores y avisos de todo el proyecto |
-| Salidas | `exporters/` | Unifilar SVG, cuadro de cargas CSV e informe PDF |
+| Salidas | `exporters/` | Unifilar SVG, modelo IFC4, cuadro de cargas CSV e informe PDF |
 
 Tablas normativas (36 a 44) como datos versionados en
 `core/norms/nbr5410/data/`, con su procedencia y método de contraste en
@@ -54,13 +54,20 @@ python -m pytest
 python -m exporters examples/casa-conforme.json --salida salida
 ```
 
-Genera `unifilar.svg` (diagrama vectorial), `cuadro_cargas.csv` y `informe.pdf`
-con portada, cuadro de cargas, unifilar, lista de materiales y observaciones.
-El PDF requiere la dependencia opcional:
+Genera `unifilar.svg` (diagrama vectorial), `modelo.ifc` (BIM IFC4),
+`cuadro_cargas.csv` e `informe.pdf` con portada, cuadro de cargas, unifilar,
+lista de materiales y observaciones. PDF e IFC requieren dependencias opcionales:
 
 ```bash
-pip install ".[export]"
+pip install ".[export]"   # PDF + IFC
+pip install ".[bim]"      # solo IFC
 ```
+
+El modelo IFC4 incluye jerarquía espacial (sitio, edificio, nivel), ambientes
+extruidos, tablero, puntos eléctricos (luminarias, tomas, interruptores) y los
+circuitos como `IfcDistributionCircuit`, con las propiedades de cálculo en
+property sets `Pset_CADBIMElectri_*`. Si falta IfcOpenShell, la CLI omite el IFC
+y lo informa.
 
 El mismo diagrama alimenta SVG y PDF, así que ambos formatos muestran la misma
 geometría. Ningún dato faltante se completa por estimación: si falta una longitud
@@ -70,7 +77,7 @@ o una tabla, el informe lo declara como observación.
 
 - [plan.md](plan.md): plan completo y hoja de ruta.
 - [core/model/project.schema.json](core/model/project.schema.json): esquema del proyecto.
-- [exporters/](exporters): exportadores SVG, PDF y CSV; CLI `python -m exporters`.
+- [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
 - [docs/decisiones](docs/decisiones): ADR 0001 (stack) y ADR 0002 (licencia).

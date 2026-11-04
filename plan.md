@@ -123,7 +123,7 @@ Regla: **toda la geometría y la lógica salen de este JSON**; cualquier vista e
 6. **Demanda y alimentación del tablero** (factores de demanda, acometida).
 7. **Cuadro de cargas y balanceo de fases.**
 8. **Lista de materiales** (cables, eletrodutos, cajas, dispositivos).
-9. **Salidas:** cuadro de cargas, unifilar SVG, informe PDF y CSV (`exporters/`).
+9. **Salidas:** cuadro de cargas, unifilar SVG, informe PDF, CSV y modelo IFC4 (`exporters/`).
 
 ### Calidad
 - Cada fórmula con **pruebas unitarias** contra ejemplos resueltos de la norma/libros.
@@ -167,6 +167,7 @@ El usuario escribe en el chat → el LLM llama **herramientas** sobre el modelo 
 ## 8. BIM / IFC
 
 - **Objetivo realista:** exportar e importar un subconjunto de IFC (ambientes, tablero, puntos, circuitos como sistemas), no modelar arquitectura.
+- **Exportación IFC4 (completada en v0.2):** `exporters/ifc.py` con IfcOpenShell genera la jerarquía sitio/edificio/nivel, ambientes por extrusión, tablero, puntos eléctricos (`IfcOutlet`, `IfcLightFixture`, `IfcSwitchingDevice`), circuitos como `IfcDistributionCircuit` y propiedades de cálculo en `Pset_CADBIMElectri_*`. Verificado con `ifcopenshell.validate` sin errores.
 - Lectura de un IFC arquitectónico existente para extraer ambientes y geometría base.
 - Uso de **IfcOpenShell**; probar interoperabilidad con FreeCAD/Bonsai y con Revit mediante IFC.
 - Ver 3D: visor web (p. ej. librería IFC para web) en v0.3.
@@ -226,10 +227,10 @@ voltacad/
 | **0. Fundamentos** | Repo, README, plan, licencia, CI vacío, ADRs iniciales (stack y licencia) | Repo creado y CI verde |
 | **1. Modelo** | Esquema `project.json` + validación + 2 proyectos de ejemplo | Ejemplos validan contra el esquema |
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
-| **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, BOM, PDF | PDF completo de un proyecto de ejemplo |
+| **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, IFC4, BOM, PDF | PDF completo e IFC válido de un proyecto de ejemplo |
 | **4. IA v0** | Chat + tools básicas por CLI/API | Crear una casa simple por chat sin errores de validación |
 | **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
-| **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC abre en FreeCAD/Bonsai | Verificado a mano |
+| **6. Export QET + IFC** | `.qet` abre en QElectroTech (IFC ya exportado en fase 3) | Verificado a mano |
 | **7. Pulido MVP** | Evals de IA, documentación, ejemplos, primera versión pública | Release v0.1 |
 
 ---
@@ -254,11 +255,12 @@ voltacad/
 1. ~~Stack: Python + web vs. Flutter.~~ → Python + web ([ADR 0001](docs/decisiones/0001-stack.md)).
 2. ~~Licencia del proyecto (MIT/Apache/AGPL).~~ → Apache-2.0 ([ADR 0002](docs/decisiones/0002-licencia.md)).
 3. ~~Cómo se almacenarán las tablas normativas.~~ → CSV versionados con procedencia en `core/norms/nbr5410/data/` (ver `SOURCE.md`).
+4. ~~Formato BIM de salida.~~ → IFC4 con IfcOpenShell; circuitos como `IfcDistributionCircuit` y propiedades en `Pset_CADBIMElectri_*`.
 
 **Pendientes:**
-4. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
-5. ¿Proyecto abierto al público o privado al inicio?
-6. Nombre definitivo.
+5. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
+6. ¿Proyecto abierto al público o privado al inicio?
+7. Nombre definitivo.
 
 ---
 
