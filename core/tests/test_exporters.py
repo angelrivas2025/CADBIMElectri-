@@ -8,6 +8,7 @@ import pytest
 from core.calc.validate import validar_proyecto
 from core.model.loader import load_project
 from exporters.__main__ import main
+from exporters.bom_csv import materiales_csv
 from exporters.csv_export import cuadro_csv
 from exporters.diagram import construir_unifilar
 from exporters.svg import unifilar_svg
@@ -58,6 +59,18 @@ def test_csv_tiene_una_fila_por_circuito(tmp_path, proyecto_informe):
     assert c3["Caida_pct"] == "3.42"
 
 
+def test_csv_de_materiales_agrupa_cables(tmp_path, proyecto_informe):
+    _, informe = proyecto_informe
+    ruta = materiales_csv(informe, tmp_path / "materiales.csv")
+    with ruta.open(newline="", encoding="utf-8-sig") as archivo:
+        filas = list(csv.DictReader(archivo, delimiter=";"))
+    cables = [f for f in filas if f["Tipo"] == "cable"]
+    assert cables and all(float(f["Cantidad"]) > 0 for f in cables)
+    assert all("mm²" in f["Descripcion"] for f in cables)
+    assert any(f["Tipo"] == "disyuntor" for f in filas)
+    assert any(f["Tipo"] == "tablero" for f in filas)
+
+
 def test_pdf_completo(tmp_path, proyecto_informe):
     pytest.importorskip("fpdf")
     from exporters.pdf import informe_pdf
@@ -73,7 +86,9 @@ def test_pdf_completo(tmp_path, proyecto_informe):
 def test_cli_exporta_las_salidas(tmp_path):
     destino = tmp_path / "salida"
     assert main([str(CONFORME), "--salida", str(destino)]) == 0
-    nombres = ["unifilar.svg", "informe.pdf", "cuadro_cargas.csv"]
+    nombres = [
+        "unifilar.svg", "informe.pdf", "cuadro_cargas.csv", "materiales.csv"
+    ]
     if importlib.util.find_spec("ifcopenshell") is not None:
         nombres.append("modelo.ifc")
     for nombre in nombres:

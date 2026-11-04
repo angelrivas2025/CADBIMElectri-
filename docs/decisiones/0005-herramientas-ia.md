@@ -51,7 +51,7 @@ propone, el motor de cálculo valida»; falta definir cómo se aplica una propue
 | `place_point` / `assign_to_circuit` | Puntos eléctricos y su circuito |
 | `set_project` / `set_supply` | Tensión, sistema, ubicación y datos de suministro |
 | `run_validation` | Ejecuta el motor y devuelve el resultado |
-| `export` | SVG, PDF, CSV, IFC o todos en una carpeta |
+| `export` | SVG, PDF, cuadro CSV, materiales CSV, IFC o todos en una carpeta |
 
 No se incluyen todavía `auto_place_points`, `size_circuit` ni `undo` como
 herramienta: las dos primeras requieren reglas normativas explícitas y la

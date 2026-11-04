@@ -65,8 +65,9 @@ python -m exporters examples/casa-conforme.json --salida salida
 ```
 
 Genera `unifilar.svg` (diagrama vectorial), `modelo.ifc` (BIM IFC4),
-`cuadro_cargas.csv` e `informe.pdf` con portada, cuadro de cargas, unifilar,
-lista de materiales y observaciones. PDF e IFC requieren dependencias opcionales:
+`cuadro_cargas.csv`, `materiales.csv` e `informe.pdf` con portada, cuadro de
+cargas, unifilar, lista de materiales y observaciones. PDF e IFC requieren
+dependencias opcionales:
 
 ```bash
 pip install ".[export]"   # PDF + IFC

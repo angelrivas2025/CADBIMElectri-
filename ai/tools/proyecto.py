@@ -424,14 +424,14 @@ def validar(project: dict[str, Any], arguments: dict[str, Any]) -> dict[str, Any
 
 @definir(
     "export",
-    "Exporta el proyecto validado a svg, pdf, csv, ifc o todos ('todo') en la "
-    "ruta indicada.",
+    "Exporta el proyecto validado a svg, pdf, csv (cuadro), materiales, ifc o "
+    "todos ('todo') en la ruta indicada.",
     {
         "type": "object",
         "properties": {
             "format": {
                 "type": "string",
-                "enum": ["svg", "pdf", "csv", "ifc", "todo"],
+                "enum": ["svg", "pdf", "csv", "materiales", "ifc", "todo"],
             },
             "path": {"type": "string", "minLength": 1},
         },
@@ -466,6 +466,10 @@ def exportar(project: dict[str, Any], arguments: dict[str, Any]) -> dict[str, An
             from exporters.csv_export import cuadro_csv
 
             cuadro_csv(project, informe, destino)
+        elif formato == "materiales":
+            from exporters.bom_csv import materiales_csv
+
+            materiales_csv(informe, destino)
         elif formato == "ifc":
             from exporters.ifc import disponible, modelo_ifc
 

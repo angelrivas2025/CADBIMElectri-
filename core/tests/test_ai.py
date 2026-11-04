@@ -267,6 +267,9 @@ def test_export_svg_y_csv(agente, tmp_path):
     csv = tmp_path / "cuadro.csv"
     agente.aplicar("export", {"format": "csv", "path": str(csv)})
     assert "ID" in csv.read_text(encoding="utf-8-sig")
+    materiales = tmp_path / "materiales.csv"
+    agente.aplicar("export", {"format": "materiales", "path": str(materiales)})
+    assert "Descripcion" in materiales.read_text(encoding="utf-8-sig")
     with pytest.raises(ErrorHerramienta, match="argumentos inválidos"):
         agente.aplicar("export", {"format": "qet", "path": str(tmp_path / "x.qet")})
 

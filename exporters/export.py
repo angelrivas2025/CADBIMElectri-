@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from exporters.bom_csv import materiales_csv
 from exporters.csv_export import cuadro_csv
 from exporters.diagram import construir_unifilar
 from exporters.ifc import disponible as ifc_disponible, modelo_ifc
@@ -21,6 +22,7 @@ def exportar_todo(
         "svg": escribir_svg(diagrama, destino / "unifilar.svg"),
         "pdf": informe_pdf(project, informe, destino / "informe.pdf"),
         "csv": cuadro_csv(project, informe, destino / "cuadro_cargas.csv"),
+        "materiales": materiales_csv(informe, destino / "materiales.csv"),
     }
     if ifc_disponible():
         rutas["ifc"] = modelo_ifc(project, informe, destino / "modelo.ifc")

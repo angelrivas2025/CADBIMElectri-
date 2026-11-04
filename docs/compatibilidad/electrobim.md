@@ -32,7 +32,7 @@ puente BIM es IFC.
 | Cálculo y dimensionamiento | Delega en Ampère o red reducida | Propio, NBR 5410 | Ya disponible |
 | Optimización por caída de tensión | Sí | Sí, por circuito | Ya disponible |
 | Tablas por cuadro | Sí, personalizables | CSV/PDF con columna de tablero | Parcial |
-| Tabla general de cables | Sí, por tipo de red | Parcial (BOM) | Fase 3.5 |
+| Tabla general de cables | Sí, por tipo de red | `materiales.csv` agrupa cables por tipo y sección | Implementado |
 | Redes auxiliares | Datos, EVAC/incendio, TV/SAT | No | Post-MVP |
 | Sincronización con cálculo externo | Ampère | No aplica (motor propio) | — |
 | BIM | Revit propietario | IFC4 abierto con nodos, tramos y conectividad | Implementado (validado con IfcOpenShell; falta verificación en visor) |
@@ -82,10 +82,10 @@ Fecha/versión: 2026-11-04 / versión observada
 | C09 | Exportación BIM y lista de cables | Entidades, propiedades y cantidades |
 | C10 | Cambio de potencia en una carga | Propagación y actualización de tablas |
 
-Estado: C01–C05 están automatizados en `core/tests/test_net.py`; el mapeo IFC de
-C09 (nodos, tramos, propiedades y puertos) está cubierto en
-`core/tests/test_ifc.py`, pero la lista general de cables y C06–C08/C10 siguen
-pendientes.
+Estado: C01–C05 están automatizados en `core/tests/test_net.py`; el export BIM
+(entidades, propiedades y puertos) y la lista de materiales CSV de C09 están
+cubiertos en `core/tests/test_ifc.py` y `core/tests/test_exporters.py`; C06–C08
+y C10 siguen pendientes.
 
 ### Evidencia y límites
 
