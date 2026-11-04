@@ -12,7 +12,7 @@ from exporters.export import exportar_todo
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m exporters",
-        description="Genera unifilar SVG, cuadro de cargas CSV e informe PDF.",
+        description="Genera unifilar SVG, cuadro de cargas CSV, informe PDF y modelo IFC.",
     )
     parser.add_argument("proyecto", type=Path, help="Ruta al project.json")
     parser.add_argument(
@@ -35,6 +35,8 @@ def main(argv: list[str] | None = None) -> int:
 
     for nombre, ruta in rutas.items():
         print(f"{nombre}: {ruta}")
+    if "ifc" not in rutas:
+        print("ifc: omitido (instale 'cadbimelectri[bim]' para exportar el modelo)")
     for error in informe["errores"]:
         print(f"ERROR: {error}")
     if informe["errores"]:

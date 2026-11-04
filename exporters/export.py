@@ -6,6 +6,7 @@ from typing import Any
 
 from exporters.csv_export import cuadro_csv
 from exporters.diagram import construir_unifilar
+from exporters.ifc import disponible as ifc_disponible, modelo_ifc
 from exporters.pdf import informe_pdf
 from exporters.svg import escribir_svg
 
@@ -16,8 +17,11 @@ def exportar_todo(
     destino = Path(salida)
     destino.mkdir(parents=True, exist_ok=True)
     diagrama = construir_unifilar(project, informe)
-    return {
+    rutas = {
         "svg": escribir_svg(diagrama, destino / "unifilar.svg"),
         "pdf": informe_pdf(project, informe, destino / "informe.pdf"),
         "csv": cuadro_csv(project, informe, destino / "cuadro_cargas.csv"),
     }
+    if ifc_disponible():
+        rutas["ifc"] = modelo_ifc(project, informe, destino / "modelo.ifc")
+    return rutas

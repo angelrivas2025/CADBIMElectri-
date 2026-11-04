@@ -1,4 +1,5 @@
 import csv
+import importlib.util
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -68,10 +69,13 @@ def test_pdf_completo(tmp_path, proyecto_informe):
     assert len(datos) > 4000
 
 
-def test_cli_exporta_las_tres_salidas(tmp_path):
+def test_cli_exporta_las_salidas(tmp_path):
     destino = tmp_path / "salida"
     assert main([str(CONFORME), "--salida", str(destino)]) == 0
-    for nombre in ("unifilar.svg", "informe.pdf", "cuadro_cargas.csv"):
+    nombres = ["unifilar.svg", "informe.pdf", "cuadro_cargas.csv"]
+    if importlib.util.find_spec("ifcopenshell") is not None:
+        nombres.append("modelo.ifc")
+    for nombre in nombres:
         assert (destino / nombre).is_file()
 
 

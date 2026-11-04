@@ -202,6 +202,7 @@ def _portada(pdf: Any, project: dict[str, Any], informe: dict[str, Any]) -> None
         ("Circuitos con DR 30 mA", ", ".join(sorted(dr)) or "ninguno"),
         ("DPS", " + ".join(f"clase {c}" for c in clases_dps) or "no requerido"),
         ("Alimentador", _resumen_alimentador(informe.get("alimentador"))),
+        ("Salidas", "unifilar.svg · modelo.ifc · cuadro_cargas.csv"),
     ]
     for etiqueta, valor in datos:
         pdf.set_font("helvetica", "B", 8.5)
