@@ -12,7 +12,9 @@
       "exposed_parts": false,
       "has_lightning_rod": false,
       "sensitive_equipment": true,
-      "icc_ka": 3
+      "icc_ka": 3,
+      "feeder_length_m": 12,
+      "feeder_method": "D"
     }
   },
   "levels": [{ "id": "N0", "name": "Planta baja", "elevation": 0 }],

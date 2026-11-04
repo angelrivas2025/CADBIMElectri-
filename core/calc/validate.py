@@ -15,7 +15,7 @@ from core.calc.grouping import (
 )
 from core.calc.load_forecast import previsao_cargas, validar_puntos_minimos
 from core.calc.protections import resumen_protecciones
-from core.calc.sizing import dimensionar_proyecto
+from core.calc.sizing import dimensionar_alimentador, dimensionar_proyecto
 from core.model.loader import reference_issues, schema_issues
 
 
@@ -62,6 +62,26 @@ def validar_proyecto(
         if isinstance(etapa, dict):
             avisos.extend(f"{nombre}: {a}" for a in etapa.get("warnings", []))
 
+    alimentador = None
+    supply = (project.get("project") or {}).get("supply") or {}
+    demanda_calculada = resultados.get("demanda")
+    if (
+        supply.get("feeder_length_m")
+        and isinstance(demanda_calculada, dict)
+        and demanda_calculada["demanda_va"] > 0
+    ):
+        try:
+            alimentador = dimensionar_alimentador(
+                project,
+                demanda_calculada["demanda_va"],
+                longitud_m=supply["feeder_length_m"],
+                metodo=supply.get("feeder_method"),
+                opciones=opciones,
+            )
+            avisos.extend(f"alimentador: {a}" for a in alimentador.get("warnings", []))
+        except Exception as e:
+            avisos.append(f"No se pudo calcular el alimentador: {e}")
+
     materiales = None
     if isinstance(resultados.get("dimensionamiento"), dict):
         try:
@@ -78,5 +98,6 @@ def validar_proyecto(
         "demanda": resultados.get("demanda"),
         "protecciones": resultados.get("protecciones"),
         "dimensionamiento": resultados.get("dimensionamiento"),
+        "alimentador": alimentador,
         "materiales": materiales,
     }

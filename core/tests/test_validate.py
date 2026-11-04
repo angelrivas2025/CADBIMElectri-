@@ -71,3 +71,19 @@ def test_el_ejemplo_conforme_pasa_completo():
     assert set(r["protecciones"]["dr_por_circuito"]) == {"C3"}
     assert r["protecciones"]["dps_clases"] == ["II", "III"]
     assert all(c["voltage_drop_pct"] < 4 for c in r["dimensionamiento"]["circuits"])
+
+
+def test_alimentador_se_calcula_con_longitud_declarada():
+    r = validar_proyecto(load_project(CONFORME))
+    alimentador = r["alimentador"]
+    assert alimentador is not None
+    assert alimentador["phases"] == 2
+    assert alimentador["length_m"] == 12
+    assert alimentador["section_mm2"] >= 2.5
+    assert alimentador["breaker_a"] >= 16
+    assert alimentador["voltage_drop_pct"] < 4
+
+
+def test_sin_longitud_no_hay_alimentador():
+    r = validar_proyecto(load_project(EJEMPLO))
+    assert r["alimentador"] is None

@@ -27,7 +27,9 @@
             "exposed_parts": { "type": "boolean", "description": "Partes de la instalación expuestas (AQ3)" },
             "has_lightning_rod": { "type": "boolean" },
             "sensitive_equipment": { "type": "boolean" },
-            "icc_ka": { "type": "number", "exclusiveMinimum": 0, "description": "Corriente de cortocircuito presumida" }
+            "icc_ka": { "type": "number", "exclusiveMinimum": 0, "description": "Corriente de cortocircuito presumida" },
+            "feeder_length_m": { "type": "number", "exclusiveMinimum": 0, "description": "Longitud del alimentador desde el punto de entrega" },
+            "feeder_method": { "type": "string", "enum": ["A1", "A2", "B1", "B2", "C", "D", "E", "F", "G"], "description": "Método de instalación del alimentador (tabla 33)" }
           }
         }
       }

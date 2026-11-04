@@ -221,4 +221,9 @@ def dimensionar_alimentador(
         limite_pct=opciones["limite_pct"],
         tipo_carga="general",
     )
-    return {"current_a": corriente, **resultado, "warnings": avisos + resultado["warnings"]}
+    return {
+        "current_a": corriente,
+        "phases": len(fases),
+        **resultado,
+        "warnings": avisos + resultado["warnings"],
+    }
