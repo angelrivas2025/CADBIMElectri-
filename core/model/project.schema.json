@@ -16,7 +16,20 @@
         "norm": { "type": "string", "enum": ["NBR5410"] },
         "voltage": { "type": "number", "exclusiveMinimum": 0, "description": "Tensión fase-neutro en V" },
         "system": { "type": "string", "enum": ["monofasico", "bifasico", "trifasico"] },
-        "location": { "type": "string" }
+        "location": { "type": "string" },
+        "supply": {
+          "type": "object",
+          "description": "Datos para evaluar DPS (NBR 5410 5.4.2.1)",
+          "additionalProperties": false,
+          "properties": {
+            "type": { "type": "string", "enum": ["aerea", "subterranea"] },
+            "thunderstorm_days": { "type": "number", "minimum": 0, "description": "Días de tormenta al año" },
+            "exposed_parts": { "type": "boolean", "description": "Partes de la instalación expuestas (AQ3)" },
+            "has_lightning_rod": { "type": "boolean" },
+            "sensitive_equipment": { "type": "boolean" },
+            "icc_ka": { "type": "number", "exclusiveMinimum": 0, "description": "Corriente de cortocircuito presumida" }
+          }
+        }
       }
     },
     "levels": {
@@ -65,7 +78,11 @@
           "position": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
           "height": { "type": "number", "description": "Altura de montaje en m" },
           "power": { "type": "number", "minimum": 0, "description": "Potencia en VA" },
-          "circuit": { "type": ["string", "null"] }
+          "circuit": { "type": ["string", "null"] },
+          "feeds_outdoor": {
+            "type": "boolean",
+            "description": "Toma interior que puede alimentar equipos en el exterior (exige DR 30 mA)"
+          }
         }
       }
     },
@@ -80,7 +97,21 @@
           "name": { "type": "string" },
           "type": { "type": "string", "enum": ["iluminacion", "tug", "tue"] },
           "panel": { "type": "string" },
-          "phase": { "type": "string", "enum": ["A", "B", "C", "AB", "BC", "AC", "ABC"] }
+          "phase": { "type": "string", "enum": ["A", "B", "C", "AB", "BC", "AC", "ABC"] },
+          "method": {
+            "type": "string",
+            "enum": ["A1", "A2", "B1", "B2", "C", "D", "E", "F", "G"],
+            "description": "Método de referencia de instalación (NBR 5410 tabla 33)"
+          },
+          "method_variant": {
+            "type": "string",
+            "enum": ["F_JUSTAPOSTO", "F_TRIFOLIO", "G_HORIZONTAL", "G_VERTICAL"],
+            "description": "Variante obligatoria para los métodos F y G"
+          },
+          "length_m": { "type": "number", "exclusiveMinimum": 0, "description": "Longitud de ida del tramo" },
+          "n_loaded": { "type": "integer", "enum": [2, 3], "description": "Conductores cargados" },
+          "material": { "type": "string", "enum": ["Cu", "Al"] },
+          "insulation": { "type": "string", "enum": ["PVC", "XLPE"] }
         }
       }
     },
