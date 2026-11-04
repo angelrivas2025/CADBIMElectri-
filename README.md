@@ -3,10 +3,10 @@
 Herramienta abierta para proyectos eléctricos residenciales (planta, circuitos,
 unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA por chat.
 
-> Estado: fases 1–3 completas y núcleo de la fase 3.5 (red y ruteo 2.5D)
-> implementado. La ocupación de conductos queda como «no verificable» hasta
-> incorporar las tablas de diámetros con procedencia. Aún no es apta para
-> proyectos reales.
+> Estado: fases 1–4 completas (motor, exportadores, red 2.5D y asistente IA) y
+> editor web de la fase 5 en versión MVP. La ocupación de conductos queda como
+> «no verificable» hasta incorporar las tablas de diámetros con procedencia. Aún
+> no es apta para proyectos reales.
 
 ## Principios
 
@@ -30,7 +30,8 @@ unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA p
 | Red y ruteo | `core/net/` | Grafo 2.5D, camino mínimo, longitud y agrupamiento por circuito, ocupación por tramo |
 | Materiales | `core/calc/bom.py` | Lista de cables, protecciones y tableros |
 | Validación integral | `core/calc/validate.py` | Errores y avisos de todo el proyecto |
-| Salidas | `exporters/` | Unifilar SVG, modelo IFC4, cuadro de cargas CSV e informe PDF |
+| Salidas | `exporters/` | Unifilar SVG, modelo IFC4, cuadro de cargas CSV, materiales CSV e informe PDF |
+| Editor web | `api/` | Plano SVG por nivel, puntos por clic, validación, chat, deshacer y exportación |
 
 Tablas normativas (36 a 44) como datos versionados en
 `core/norms/nbr5410/data/`, con su procedencia y método de contraste en
@@ -88,6 +89,33 @@ El mismo diagrama alimenta SVG y PDF, así que ambos formatos muestran la misma
 geometría. Ningún dato faltante se completa por estimación: si falta una longitud
 o una tabla, el informe lo declara como observación.
 
+## Editor web
+
+```bash
+pip install ".[api,export]"   # o ".[dev]" dentro del repo
+python -m api --proyecto examples/casa-conforme.json
+# abrir http://127.0.0.1:8000
+```
+
+El editor es una sesión local de un solo usuario. Dibuja el plano por nivel,
+permite colocar puntos con un clic (el formulario llama a `place_point`), muestra
+errores, avisos, circuitos y alimentador del motor, conversa con el asistente,
+deshace cambios y exporta SVG, PDF, CSV, materiales e IFC con vista previa del
+unifilar. **Guardar** descarga el proyecto JSON y **Abrir** lo recarga después de
+validarlo; la sesión no escribe el archivo original.
+
+Para usarlo desde el teléfono en la misma red:
+
+```bash
+python -m api --proyecto casa.json --host 0.0.0.0 --port 8000
+# abrir http://IP-DE-LA-COMPUTADORA:8000
+```
+
+La API no tiene autenticación: expóngala solo en una red de confianza. El chat
+necesita `CADBIM_LLM_KEY` en el entorno del servidor; sin clave, el resto del
+editor funciona y el chat responde 503. Ver
+[ADR 0006](docs/decisiones/0006-editor-web.md).
+
 ## Asistente
 
 La IA no edita el JSON a mano ni calcula: emite llamadas a herramientas con
@@ -119,11 +147,12 @@ HTTP está probada con un proveedor simulado; falta la prueba con un servicio re
 - [plan.md](plan.md): plan completo y hoja de ruta.
 - [core/model/project.schema.json](core/model/project.schema.json): esquema del proyecto.
 - [ai/](ai): herramientas del asistente (contratos JSON Schema, agente con historial y CLI `python -m ai`).
+- [api/](api): editor local (FastAPI + uvicorn) y frontend sin build en `api/web` (plano SVG, validación, chat y exportación).
 - [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
 - [examples/casa-red.json](examples/casa-red.json): variante con red 2.5D (esquema 0.2); rutea los circuitos, aplica agrupamiento real y calcula el alimentador por la ruta.
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
-- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room), ADR 0004 (red y ruteo 2.5D) y ADR 0005 (herramientas IA).
+- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room), ADR 0004 (red y ruteo 2.5D), ADR 0005 (herramientas IA) y ADR 0006 (editor web local).
 - [docs/compatibilidad/electrobim.md](docs/compatibilidad/electrobim.md): matriz de paridad y protocolo de pruebas de caja negra.
 
 ## Licencia

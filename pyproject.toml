@@ -7,12 +7,29 @@ requires-python = ">=3.10"
 dependencies = ["jsonschema>=4.18"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "fpdf2>=2.7,<3", "ifcopenshell>=0.8"]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+    "fpdf2>=2.7,<3",
+    "ifcopenshell>=0.8",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
 export = ["fpdf2>=2.7,<3", "ifcopenshell>=0.8"]
 bim = ["ifcopenshell>=0.8"]
+api = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [tool.pytest.ini_options]
 testpaths = ["core/tests"]
 
 [tool.setuptools.packages.find]
-include = ["core*", "exporters*", "ai*"]
+include = ["core*", "exporters*", "ai*", "api*"]
+
+[tool.setuptools.package-data]
+api = ["web/*.html", "web/*.css", "web/*.js"]
+ai = ["prompts/*.md"]
+core = [
+    "model/*.json",
+    "norms/nbr5410/data/*.csv",
+    "norms/nbr5410/data/*.md",
+]

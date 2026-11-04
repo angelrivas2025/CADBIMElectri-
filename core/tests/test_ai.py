@@ -5,7 +5,8 @@ from pathlib import Path
 import pytest
 
 from ai import Agente
-from ai.__main__ import main, proyecto_nuevo
+from ai.__main__ import main
+from ai.project import proyecto_nuevo
 from ai.tools import CATALOGO, ErrorHerramienta, describir, ejecutar
 from core.calc.validate import validar_proyecto
 from core.model.loader import load_project

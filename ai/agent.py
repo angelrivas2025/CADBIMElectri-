@@ -31,6 +31,15 @@ class Agente:
 
         return cls(load_project(ruta))
 
+    @property
+    def puede_deshacer(self) -> bool:
+        return bool(self._copias)
+
+    def cargar(self, project: dict[str, Any]) -> None:
+        self.proyecto = copy.deepcopy(project)
+        self.historial.clear()
+        self._copias.clear()
+
     def aplicar(self, herramienta: str, arguments: dict[str, Any]) -> Any:
         antes = copy.deepcopy(self.proyecto)
         try:

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>CADBIMElectri</title>
+    <link rel="stylesheet" href="/estatico/styles.css" />
+  </head>
+  <body>
+    <header class="barra">
+      <div>
+        <h1>CADBIMElectri</h1>
+        <p class="subtitulo" id="proyecto-nombre">Cargando proyecto…</p>
+      </div>
+      <div class="acciones">
+        <button type="button" class="secundario" id="btn-abrir" title="Abrir un proyecto JSON">
+          Abrir
+        </button>
+        <a class="boton secundario" href="/api/proyecto" download="proyecto.json" title="Descargar el proyecto JSON">
+          Guardar
+        </a>
+        <button type="button" class="secundario" id="btn-deshacer" title="Deshacer el último cambio">
+          Deshacer
+        </button>
+        <button type="button" class="secundario" id="btn-validar">Validar</button>
+        <button type="button" class="secundario" id="btn-exportar">Exportar</button>
+        <input type="file" id="archivo-proyecto" accept="application/json,.json" hidden />
+      </div>
+    </header>
+
+    <main>
+      <section class="panel plano">
+        <div class="encabezado-panel">
+          <h2>Plano de planta</h2>
+          <label class="nivel">
+            Nivel
+            <select id="nivel-planta"></select>
+          </label>
+          <div class="leyenda">
+            <span><i style="background: #f4b400"></i>Luminaria</span>
+            <span><i style="background: #2f6fed"></i>Interruptor</span>
+            <span><i style="background: #0f9d58"></i>TUG</span>
+            <span><i style="background: #e8710a"></i>TUE</span>
+            <span><i style="background: #374151; border-radius: 2px"></i>Tablero</span>
+          </div>
+        </div>
+
+        <div class="lienzo">
+          <svg id="plano" role="img" aria-label="Plano de la planta con ambientes y puntos eléctricos"></svg>
+        </div>
+
+        <form class="fila" id="form-punto">
+          <label>
+            Tipo
+            <select id="punto-tipo">
+              <option value="luminaria">Luminaria</option>
+              <option value="interruptor">Interruptor</option>
+              <option value="tug" selected>TUG</option>
+              <option value="tue">TUE</option>
+            </select>
+          </label>
+          <label>
+            Potencia (VA)
+            <input id="punto-potencia" type="number" min="0" step="10" value="100" />
+          </label>
+          <label>
+            Ambiente
+            <select id="punto-ambiente"></select>
+          </label>
+          <button type="submit" id="btn-punto" disabled>Agregar punto</button>
+          <p class="pista" id="pista-punto">
+            Haga clic dentro de un ambiente para ubicar el punto. El motor valida cada cambio.
+          </p>
+        </form>
+      </section>
+
+      <aside class="panel estado">
+        <h2>Cumplimiento NBR 5410</h2>
+        <p class="veredicto" id="veredicto">Calculando…</p>
+        <div id="errores-envoltura">
+          <h3>Errores</h3>
+          <ul class="listas error" id="lista-errores"></ul>
+        </div>
+        <div>
+          <h3>Avisos</h3>
+          <ul class="listas aviso" id="lista-avisos"></ul>
+        </div>
+        <h3>Circuitos</h3>
+        <div class="tabla-envoltura">
+          <table>
+            <thead>
+              <tr>
+                <th>Cto</th>
+                <th class="num">Disyuntor (A)</th>
+                <th class="num">Sección (mm²)</th>
+                <th class="num">Corriente (A)</th>
+                <th class="num">Caída (%)</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-circuitos"></tbody>
+          </table>
+        </div>
+        <p class="alimentador" id="alimentador"></p>
+        <h3>Unifilar</h3>
+        <div class="vista-unifilar">
+          <p class="vacio" id="unifilar-vacio">Exporte para ver el diagrama.</p>
+          <img id="unifilar" alt="Diagrama unifilar del proyecto" hidden />
+        </div>
+        <div class="archivos" id="archivos"></div>
+      </aside>
+
+      <section class="panel chat">
+        <h2>Asistente</h2>
+        <div class="mensajes" id="mensajes" aria-live="polite">
+          <div class="mensaje asistente">
+            Describa el proyecto o pida cambios. La IA propone herramientas y el motor
+            de cálculo valida; los números del panel salen siempre del motor.
+          </div>
+        </div>
+        <form class="fila" id="form-chat">
+          <label style="flex: 1 1 16rem">
+            Mensaje
+            <input id="chat-texto" type="text" autocomplete="off" placeholder="Ej.: agrega un dormitorio de 3 × 4 m" />
+          </label>
+          <button type="submit" id="btn-enviar">Enviar</button>
+        </form>
+        <p class="aviso" id="chat-aviso"></p>
+      </section>
+    </main>
+
+    <div id="estado-linea" role="status" aria-live="polite"></div>
+
+    <script src="/estatico/app.js"></script>
+  </body>
+</html>

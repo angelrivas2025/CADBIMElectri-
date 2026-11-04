@@ -204,8 +204,7 @@ voltacad/
 │   ├── prompts/
 │   └── evals/
 ├── exporters/              # pdf, svg, ifc, qet, dxf
-├── api/                    # FastAPI
-├── web/                    # frontend
+├── api/                    # FastAPI y frontend estático (api/web)
 ├── symbols/                # biblioteca de símbolos SVG
 ├── examples/               # proyectos de ejemplo (.json)
 └── .github/workflows/      # CI
@@ -230,7 +229,7 @@ voltacad/
 | **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, IFC4, BOM, PDF | PDF completo e IFC válido de un proyecto de ejemplo |
 | **3.5 Red y ruteo** (núcleo completo) | Esquema 0.2, grafo acometida→cuadro→prumada→carga, ruteo 2.5D determinista, longitudes, agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)) | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) en verde; IFC con nodos, tramos y puertos validado; falta tablas de ocupación con procedencia |
 | **4. IA v0** (núcleo y chat) | Herramientas con contrato JSON Schema, aplicación atómica, historial/deshacer, CLI `python -m ai` y chat con API compatible OpenAI ([ADR 0005](docs/decisiones/0005-herramientas-ia.md)) | Un plan de herramientas crea una casa simple conforme; falta probar el chat contra un proveedor real y escribir evals |
-| **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
+| **5. Frontend v0** (MVP completado) | Editor local FastAPI + frontend sin build: plano SVG por nivel, puntos por clic, panel de cumplimiento, chat, deshacer, exportación con vista de unifilar y guardar/abrir JSON ([ADR 0006](docs/decisiones/0006-editor-web.md)) | Flujo completo en el navegador; falta prueba E2E automatizada, autenticación y autosave |
 | **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC con puertos y conectividad (ya implementado en 3.5) | Verificado a mano |
 | **7. Pulido MVP** | Evals de IA, documentación, ejemplos, primera versión pública | Release v0.1 |
 
@@ -241,9 +240,12 @@ casos C01–C05 en verde; IFC con `IfcJunctionBox`, `IfcCableCarrierSegment`,
 puertos y conectividad, sin errores de reglas EXPRESS; núcleo de la fase 4:
 herramientas validadas, aplicación atómica, deshacer y CLI `python -m ai`, con un
 plan de ejemplo que crea una casa simple conforme; chat con una API compatible
-OpenAI y proveedor simulado en tests. Pendiente: tablas de diámetros/límites de
-ocupación con procedencia verificable, prueba del chat con un servicio real y
-evals de conversación.
+OpenAI y proveedor simulado en tests; editor web local (`python -m api`) con
+plano SVG por nivel, colocación de puntos, panel de cumplimiento, chat, deshacer,
+exportación con vista de unifilar y guardar/abrir el proyecto JSON. Pendiente:
+tablas de diámetros/límites de ocupación con procedencia verificable, prueba del
+chat con un servicio real, evals de conversación, prueba E2E del navegador y
+autenticación si el editor sale de la red local.
 
 ---
 
@@ -270,11 +272,12 @@ evals de conversación.
 4. ~~Formato BIM de salida.~~ → IFC4 con IfcOpenShell; circuitos como `IfcDistributionCircuit` y propiedades en `Pset_CADBIMElectri_*`.
 5. ~~Cómo igualar servicios de herramientas comerciales.~~ → Clean room, caja negra y formatos abiertos; sin descompilar binarios ajenos ([ADR 0003](docs/decisiones/0003-compatibilidad-clean-room.md), [protocolo](docs/compatibilidad/electrobim.md)).
 6. ~~Cómo modelar la red y calcular longitudes.~~ → Grafo explícito y ruteo 2.5D sobre conductos declarados, con agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)).
+7. ~~Cómo ofrecer el editor visual.~~ → API FastAPI local de una sola sesión y frontend estático sin build; la API repite las reglas del agente y el chat es opcional ([ADR 0006](docs/decisiones/0006-editor-web.md)).
 
 **Pendientes:**
-7. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
-8. ¿Proyecto abierto al público o privado al inicio?
-9. Nombre definitivo.
+8. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
+9. ¿Proyecto abierto al público o privado al inicio?
+10. Nombre definitivo.
 
 ---
 

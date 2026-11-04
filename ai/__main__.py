@@ -13,27 +13,11 @@ from pathlib import Path
 
 from ai.agent import Agente
 from ai.chat import Chat, ErrorChat
+from ai.project import proyecto_nuevo
 from ai.provider import ErrorProveedor, ProveedorOpenAI
 from ai.tools import ErrorHerramienta, describir
 from core.calc.validate import validar_proyecto
 from core.model.loader import ProjectError
-
-
-def proyecto_nuevo(nombre: str, *, voltage: float = 127.0) -> dict:
-    return {
-        "schemaVersion": "0.2",
-        "project": {
-            "name": nombre,
-            "norm": "NBR5410",
-            "voltage": voltage,
-            "system": "monofasico" if voltage <= 127 else "bifasico",
-        },
-        "levels": [{"id": "N0", "name": "Nivel 0", "elevation": 0}],
-        "rooms": [],
-        "points": [],
-        "circuits": [],
-        "panels": [],
-    }
 
 
 def _cargar_plan(ruta: Path) -> list[dict]:
