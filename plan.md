@@ -229,7 +229,7 @@ voltacad/
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
 | **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, IFC4, BOM, PDF | PDF completo e IFC válido de un proyecto de ejemplo |
 | **3.5 Red y ruteo** (núcleo completo) | Esquema 0.2, grafo acometida→cuadro→prumada→carga, ruteo 2.5D determinista, longitudes, agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)) | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) en verde; IFC con nodos, tramos y puertos validado; falta tablas de ocupación con procedencia |
-| **4. IA v0** | Chat + tools básicas por CLI/API | Crear una casa simple por chat sin errores de validación |
+| **4. IA v0** (núcleo y chat) | Herramientas con contrato JSON Schema, aplicación atómica, historial/deshacer, CLI `python -m ai` y chat con API compatible OpenAI ([ADR 0005](docs/decisiones/0005-herramientas-ia.md)) | Un plan de herramientas crea una casa simple conforme; falta probar el chat contra un proveedor real y escribir evals |
 | **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
 | **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC con puertos y conectividad (ya implementado en 3.5) | Verificado a mano |
 | **7. Pulido MVP** | Evals de IA, documentación, ejemplos, primera versión pública | Release v0.1 |
@@ -238,8 +238,12 @@ Avance 2026-11-04: esquema 0.2, `core/net` (grafo, Dijkstra determinista,
 longitudes, agrupamiento y ocupación), integración en dimensionamiento,
 alimentador y BOM; `examples/casa-red.json` con longitudes alineadas al trazado y
 casos C01–C05 en verde; IFC con `IfcJunctionBox`, `IfcCableCarrierSegment`,
-puertos y conectividad, sin errores de reglas EXPRESS. Pendiente: tablas de
-diámetros/límites de ocupación con procedencia verificable.
+puertos y conectividad, sin errores de reglas EXPRESS; núcleo de la fase 4:
+herramientas validadas, aplicación atómica, deshacer y CLI `python -m ai`, con un
+plan de ejemplo que crea una casa simple conforme; chat con una API compatible
+OpenAI y proveedor simulado en tests. Pendiente: tablas de diámetros/límites de
+ocupación con procedencia verificable, prueba del chat con un servicio real y
+evals de conversación.
 
 ---
 

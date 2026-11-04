@@ -15,4 +15,4 @@ bim = ["ifcopenshell>=0.8"]
 testpaths = ["core/tests"]
 
 [tool.setuptools.packages.find]
-include = ["core*", "exporters*"]
+include = ["core*", "exporters*", "ai*"]

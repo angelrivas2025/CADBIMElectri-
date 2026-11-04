@@ -87,15 +87,42 @@ El mismo diagrama alimenta SVG y PDF, así que ambos formatos muestran la misma
 geometría. Ningún dato faltante se completa por estimación: si falta una longitud
 o una tabla, el informe lo declara como observación.
 
+## Asistente
+
+La IA no edita el JSON a mano ni calcula: emite llamadas a herramientas con
+argumentos validados por JSON Schema. Cada llamada se aplica sobre una copia y el
+proyecto resultante debe cumplir esquema y referencias; si algo falla, se
+revierte, y un plan completo es atómico. Los números salen siempre del motor.
+
+```bash
+python -m ai herramientas            # contrato que se entrega al modelo
+python -m ai aplicar plan.json --nuevo "Casa simple" --salida casa.json
+python -m ai validar casa.json
+```
+
+Un plan es `[{"tool": "add_room", "arguments": {...}}, ...]`. Para conversar,
+exporte `CADBIM_LLM_KEY` (opcionales `CADBIM_LLM_URL` y `CADBIM_LLM_MODEL`; la API
+debe ser compatible con OpenAI):
+
+```bash
+python -m ai chat --proyecto casa.json --salida casa.json
+```
+
+El modelo recibe el catálogo de herramientas y cada llamada pasa por la misma
+validación y rollback; la clave nunca se guarda en el proyecto. La integración
+HTTP está probada con un proveedor simulado; falta la prueba con un servicio real
+([ADR 0005](docs/decisiones/0005-herramientas-ia.md)).
+
 ## Documentación
 
 - [plan.md](plan.md): plan completo y hoja de ruta.
 - [core/model/project.schema.json](core/model/project.schema.json): esquema del proyecto.
+- [ai/](ai): herramientas del asistente (contratos JSON Schema, agente con historial y CLI `python -m ai`).
 - [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
 - [examples/casa-red.json](examples/casa-red.json): variante con red 2.5D (esquema 0.2); rutea los circuitos, aplica agrupamiento real y calcula el alimentador por la ruta.
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
-- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room) y ADR 0004 (red y ruteo 2.5D).
+- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room), ADR 0004 (red y ruteo 2.5D) y ADR 0005 (herramientas IA).
 - [docs/compatibilidad/electrobim.md](docs/compatibilidad/electrobim.md): matriz de paridad y protocolo de pruebas de caja negra.
 
 ## Licencia
