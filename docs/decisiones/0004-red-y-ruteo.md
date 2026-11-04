@@ -53,9 +53,9 @@ Reglas del modelo:
   y debe existir en la tabla versionada; no se aceptan diámetros libres.
 - Un segmento que une nodos de niveles distintos debe ser `riser`. Los demás
   segmentos unen nodos del mismo nivel.
-- Posiciones en metros: `position: [x, y]` y `height: z`. Los `waypoints`
-  opcionales son `[x, y, z]` y permiten modelar quiebres; sin waypoints, el
-  tramo es recto entre extremos.
+- Posiciones en metros: `position: [x, y]` y `height: z` (obligatoria: el ruteo
+  no supone cotas). Los `waypoints` opcionales son `[x, y, z]` y permiten
+  modelar quiebres; sin waypoints, el tramo es recto entre extremos.
 
 ### 2. Alcance 2.5D: rutear sobre conductos declarados
 
@@ -123,6 +123,14 @@ reescribir el motor cuando se agregue água/esgoto.
 - `network` es opcional; `routes` se elimina del esquema y de los ejemplos
   (estaba vacío).
 - `schemaVersion` pasa a `0.2` cuando se implemente el campo.
+
+### 9. Estado de implementación
+
+- [x] Esquema 0.2 con `network`, validación condicional de `ref` y `height`.
+- [x] Cargador: ids, niveles, referencias, supply único, un nodo por tablero y
+  por circuito, tramos y regla de riser.
+- [x] Ejemplo `examples/casa-red.json` y tests de esquema/referencias.
+- [ ] `core/net`, ruteo, ocupación y uso en dimensionamiento.
 
 ## Alternativas descartadas
 

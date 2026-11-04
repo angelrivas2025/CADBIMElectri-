@@ -3,7 +3,7 @@
 Herramienta abierta para proyectos eléctricos residenciales (planta, circuitos,
 unifilar/multifilar, BIM/IFC) con motor de cálculo NBR 5410 y asistente de IA por chat.
 
-> Estado: fase 1–3 (modelo de datos, motor de cálculo y salidas). Aún no es apta
+> Estado: fases 1–3 completas y fase 3.5 en curso (red y ruteo). Aún no es apta
 > para proyectos reales.
 
 ## Principios
@@ -79,6 +79,7 @@ o una tabla, el informe lo declara como observación.
 - [core/model/project.schema.json](core/model/project.schema.json): esquema del proyecto.
 - [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
+- [examples/casa-red.json](examples/casa-red.json): variante con red 2.5D (esquema 0.2); valida nodos, tramos y referencias.
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
 - [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room) y ADR 0004 (red y ruteo 2.5D).
 - [docs/compatibilidad/electrobim.md](docs/compatibilidad/electrobim.md): matriz de paridad y protocolo de pruebas de caja negra.

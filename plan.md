@@ -228,11 +228,14 @@ voltacad/
 | **1. Modelo** | Esquema `project.json` + validación + 2 proyectos de ejemplo | Ejemplos validan contra el esquema |
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
 | **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, IFC4, BOM, PDF | PDF completo e IFC válido de un proyecto de ejemplo |
-| **3.5 Red y ruteo** (propuesta) | Grafo acometida→cuadro→prumada→carga, tramos 2.5D, longitudes, agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)) | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) y tablas por cuadro |
+| **3.5 Red y ruteo** (en curso) | Esquema 0.2 y validaciones listos; sigue grafo acometida→cuadro→prumada→carga, tramos 2.5D, longitudes, agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)) | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) y tablas por cuadro |
 | **4. IA v0** | Chat + tools básicas por CLI/API | Crear una casa simple por chat sin errores de validación |
 | **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
 | **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC con puertos y conectividad (export básico ya en fase 3) | Verificado a mano |
 | **7. Pulido MVP** | Evals de IA, documentación, ejemplos, primera versión pública | Release v0.1 |
+
+Avance 2026-11-04: esquema 0.2, validaciones de red y `examples/casa-red.json`;
+falta `core/net` (grafo, ruteo, agrupamiento y ocupación).
 
 ---
 
