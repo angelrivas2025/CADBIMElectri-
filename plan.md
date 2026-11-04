@@ -228,7 +228,7 @@ voltacad/
 | **1. Modelo** | Esquema `project.json` + validación + 2 proyectos de ejemplo | Ejemplos validan contra el esquema |
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
 | **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, IFC4, BOM, PDF | PDF completo e IFC válido de un proyecto de ejemplo |
-| **3.5 Red y ruteo** (propuesta) | Grafo acometida→cuadro→prumada→carga, tramos 2.5D, longitudes, agrupamiento y ocupación | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) y tablas por cuadro |
+| **3.5 Red y ruteo** (propuesta) | Grafo acometida→cuadro→prumada→carga, tramos 2.5D, longitudes, agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)) | Casos C01–C05 del [protocolo de paridad](docs/compatibilidad/electrobim.md) y tablas por cuadro |
 | **4. IA v0** | Chat + tools básicas por CLI/API | Crear una casa simple por chat sin errores de validación |
 | **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
 | **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC con puertos y conectividad (export básico ya en fase 3) | Verificado a mano |
@@ -258,11 +258,12 @@ voltacad/
 3. ~~Cómo se almacenarán las tablas normativas.~~ → CSV versionados con procedencia en `core/norms/nbr5410/data/` (ver `SOURCE.md`).
 4. ~~Formato BIM de salida.~~ → IFC4 con IfcOpenShell; circuitos como `IfcDistributionCircuit` y propiedades en `Pset_CADBIMElectri_*`.
 5. ~~Cómo igualar servicios de herramientas comerciales.~~ → Clean room, caja negra y formatos abiertos; sin descompilar binarios ajenos ([ADR 0003](docs/decisiones/0003-compatibilidad-clean-room.md), [protocolo](docs/compatibilidad/electrobim.md)).
+6. ~~Cómo modelar la red y calcular longitudes.~~ → Grafo explícito y ruteo 2.5D sobre conductos declarados, con agrupamiento y ocupación ([ADR 0004](docs/decisiones/0004-red-y-ruteo.md)).
 
 **Pendientes:**
-6. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
-7. ¿Proyecto abierto al público o privado al inicio?
-8. Nombre definitivo.
+7. País/norma inicial confirmada: NBR 5410 (Brasil)? ¿Soporte inicial para otra?
+8. ¿Proyecto abierto al público o privado al inicio?
+9. Nombre definitivo.
 
 ---
 

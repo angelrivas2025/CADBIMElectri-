@@ -80,7 +80,7 @@ o una tabla, el informe lo declara como observación.
 - [exporters/](exporters): exportadores SVG, IFC, PDF y CSV; CLI `python -m exporters`.
 - [examples/casa-conforme.json](examples/casa-conforme.json): proyecto de ejemplo que pasa la validación integral (previsión, protecciones, dimensionamiento y BOM).
 - [examples/casa-simple.json](examples/casa-simple.json): borrador de fase 1, deliberadamente incompleto; sirve para ver cómo el validador detecta mínimos no cumplidos.
-- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia) y ADR 0003 (compatibilidad y clean room).
+- [docs/decisiones](docs/decisiones): ADR 0001 (stack), ADR 0002 (licencia), ADR 0003 (compatibilidad y clean room) y ADR 0004 (red y ruteo 2.5D).
 - [docs/compatibilidad/electrobim.md](docs/compatibilidad/electrobim.md): matriz de paridad y protocolo de pruebas de caja negra.
 
 ## Licencia
