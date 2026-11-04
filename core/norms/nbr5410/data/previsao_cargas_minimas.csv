@@ -1,0 +1,16 @@
+﻿categoria;ambiente_ou_condicao;regra_quantidade;potencia_minima;observacao;referencia
+Iluminação;Área <= 6 m²;No mínimo 1 ponto de luz no teto comandado por interruptor de parede;100 VA;"Arandelas são opcionais; no banheiro, >= 60 cm do box/banheira";NBR 5410 9.5.2.1 / IFSC
+Iluminação;Área > 6 m²;1 ponto no teto (a quantidade de pontos é do projetista);100 VA pelos primeiros 6 m² + 60 VA por cada 4 m² inteiros excedentes;"Ex.: 9 m² = 100 VA; 10 m² = 160 VA; 11 m² = 160 VA; 14 m² = 220 VA";NBR 5410 9.5.2.1 / IFSC
+Iluminação;Áreas externas;A critério do projetista;A critério do projetista;A NBR 5410 não fixa mínimo para exterior residencial;IFSC
+TUG;Área <= 6 m²;No mínimo 1 tomada;100 VA;Demais ambientes (sala, dormitório etc.);NBR 5410 9.5.2.2 / IFSC
+TUG;Área > 6 m²;1 tomada para cada 5 m ou fração de perímetro;100 VA por tomada;Demais ambientes;NBR 5410 9.5.2.2 / IFSC
+TUG;Cozinha, copa, copa-cozinha, área de serviço, lavanderia;"1 tomada para cada 3,5 m ou fração de perímetro, independente da área; no mínimo 2 acima da bancada da pia";600 VA para as 3 primeiras tomadas do ambiente + 100 VA para as excedentes;Cada ambiente é considerado separadamente;NBR 5410 9.5.2.2 / IFSC
+TUG;Banheiro e lavabo;No mínimo 1 tomada junto ao lavatório, a >= 60 cm do limite do boxe;600 VA (ambiente molhado);"Altura média; não instalar dentro da zona do boxe";NBR 5410 9.5.2.2 / IFSC
+TUG;Garagem, varanda, hall, escadaria, subsolo, sótão;No mínimo 1 tomada;100 VA;;NBR 5410 9.5.2.2 / IFSC
+TUG;Sala comercial <= 40 m²;1 tomada para cada 3 m de perímetro ou fração, OU 1 para cada 4 m² ou fração (o maior dos dois);200 VA por tomada;Instalações comerciais;NBR 5410 9.5.2.2 / UFV
+TUG;Sala comercial > 40 m²;10 tomadas para os primeiros 40 m² + 1 para cada 10 m² ou fração;200 VA por tomada;;NBR 5410 9.5.2.2 / UFV
+TUG;Lojas;1 tomada para cada 30 m² ou fração;200 VA por tomada;Vitrines e demonstração contabilizadas à parte;NBR 5410 9.5.2.2 / UFV
+TUE;Qualquer ambiente;Todo equipamento com corrente nominal > 10 A exige circuito terminal exclusivo;No mínimo a potência nominal do equipamento;"Tomada a no máximo 1,5 m do equipamento; ex.: chuveiro, torneira, ar-condicionado, secadora";NBR 5410 9.5.2.3 / IFSC
+Divisão de circuitos;Residência;"Circuitos de iluminação separados dos de TUG; cozinha/copa/área de serviço em circuito exclusivo; >= 1 circuito terminal para cada 60 m² ou fração";-;Recomenda-se não exceder 8 pontos por circuito;NBR 5410 9.5.3 / IFSC
+Divisão de circuitos;Comercial;>= 1 circuito terminal para cada 50 m² ou fração;-;"Cada circuito com fase e neutro próprios; cargas equilibradas entre fases";NBR 5410 9.5.3 / IFSC
+Carga total;Instalação;Somatório de iluminação + TUG + TUE (por ambiente e por circuito);VA ou W;Serve para definir padrão de entrada, tensão e disjuntor geral;IFSC / UFV
