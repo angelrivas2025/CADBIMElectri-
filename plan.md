@@ -123,13 +123,14 @@ Regla: **toda la geometría y la lógica salen de este JSON**; cualquier vista e
 6. **Demanda y alimentación del tablero** (factores de demanda, acometida).
 7. **Cuadro de cargas y balanceo de fases.**
 8. **Lista de materiales** (cables, eletrodutos, cajas, dispositivos).
+9. **Salidas:** cuadro de cargas, unifilar SVG, informe PDF y CSV (`exporters/`).
 
 ### Calidad
 - Cada fórmula con **pruebas unitarias** contra ejemplos resueltos de la norma/libros.
 - Cada resultado guarda **referencia al artículo de la norma** aplicado.
 - Revisión por un profesional habilitado antes de usar en proyectos reales.
 
-> Las tablas y valores de la norma deben cargarse desde la fuente oficial licenciada; no se copian de memoria. Pendiente decidir cómo almacenar las tablas (YAML/JSON versionado).
+> Las tablas y valores de la norma se cargan desde fuentes verificadas y se guardan como CSV versionados con procedencia en `core/norms/nbr5410/data/` (ver `SOURCE.md`).
 
 ---
 
@@ -225,7 +226,7 @@ voltacad/
 | **0. Fundamentos** | Repo, README, plan, licencia, CI vacío, ADRs iniciales (stack y licencia) | Repo creado y CI verde |
 | **1. Modelo** | Esquema `project.json` + validación + 2 proyectos de ejemplo | Ejemplos validan contra el esquema |
 | **2. Motor v0** | Previsión de cargas, circuitos, secciones, caída de tensión, protecciones (NBR 5410) | Tests contra ejemplos resueltos pasan |
-| **3. Salidas v0** | Cuadro de cargas, unifilar SVG, BOM, PDF | PDF completo de un proyecto de ejemplo |
+| **3. Salidas v0** (completada) | Cuadro de cargas, unifilar SVG, BOM, PDF | PDF completo de un proyecto de ejemplo |
 | **4. IA v0** | Chat + tools básicas por CLI/API | Crear una casa simple por chat sin errores de validación |
 | **5. Frontend v0** | Editor de planta + chat + vista de unifilar | Flujo completo en el navegador |
 | **6. Export QET + IFC** | `.qet` abre en QElectroTech; IFC abre en FreeCAD/Bonsai | Verificado a mano |

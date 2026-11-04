@@ -20,3 +20,6 @@ dist/
 Thumbs.db
 .idea/
 .vscode/
+
+# Salidas generadas
+salida/
