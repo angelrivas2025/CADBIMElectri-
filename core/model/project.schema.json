@@ -6,7 +6,11 @@
   "required": ["schemaVersion", "project", "levels", "rooms", "points", "circuits", "panels"],
   "additionalProperties": false,
   "properties": {
-    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "0.2 incorpora la red (network)"
+    },
     "project": {
       "type": "object",
       "required": ["name", "norm", "voltage", "system"],
@@ -130,7 +134,89 @@
         }
       }
     },
-    "routes": { "type": "array", "items": { "type": "object" } },
+    "network": {
+      "type": "object",
+      "description": "Grafo de la instalación (ADR 0004). Opcional: sin red rige la longitud declarada.",
+      "required": ["nodes", "segments"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "level", "position", "height"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "enum": ["supply", "panel", "junction", "load"] },
+              "level": { "type": "string" },
+              "position": {
+                "type": "array",
+                "items": { "type": "number" },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "[x, y] en metros"
+              },
+              "height": { "type": "number", "description": "Cota z de montaje en m" },
+              "ref": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Panel o circuito referenciado por un nodo panel/load"
+              }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "type": { "const": "panel" } }, "required": ["type"] },
+                "then": { "required": ["ref"] }
+              },
+              {
+                "if": { "properties": { "type": { "const": "load" } }, "required": ["type"] },
+                "then": { "required": ["ref"] }
+              },
+              {
+                "if": { "properties": { "type": { "enum": ["supply", "junction"] } }, "required": ["type"] },
+                "then": { "not": { "required": ["ref"] } }
+              }
+            ]
+          }
+        },
+        "segments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "from", "to", "kind", "trade_size"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "from": { "type": "string", "minLength": 1 },
+              "to": { "type": "string", "minLength": 1 },
+              "kind": {
+                "type": "string",
+                "enum": ["conduit", "tray", "riser"],
+                "description": "conduit = eletroduto, tray = eletrocalha, riser = prumada"
+              },
+              "trade_size": {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$",
+                "description": "Designación comercial del conducto en mm; debe existir en la tabla versionada"
+              },
+              "waypoints": {
+                "type": "array",
+                "description": "Puntos intermedios [x, y, z] en metros",
+                "items": {
+                  "type": "array",
+                  "items": { "type": "number" },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "calc": { "type": "object", "description": "Resultados del motor de cálculo (se rellenan en Fase 2)" },
     "history": {
       "type": "array",

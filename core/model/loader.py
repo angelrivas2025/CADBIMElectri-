@@ -27,6 +27,102 @@ def schema_issues(project: dict[str, Any]) -> list[str]:
     ]
 
 
+def _network_issues(project: dict[str, Any]) -> list[str]:
+    """Valida estructura y referencias de la red (ADR 0004)."""
+    network = project.get("network")
+    if not network:
+        return []
+
+    issues: list[str] = []
+    nodes = network.get("nodes", [])
+    segments = network.get("segments", [])
+    node_map: dict[str, dict[str, Any]] = {}
+    for node in nodes:
+        if node["id"] in node_map:
+            issues.append(f"network: nodo '{node['id']}' duplicado")
+        node_map[node["id"]] = node
+
+    segment_ids: set[str] = set()
+    for segment in segments:
+        if segment["id"] in segment_ids:
+            issues.append(f"network: tramo '{segment['id']}' duplicado")
+        segment_ids.add(segment["id"])
+
+    levels = {nivel["id"] for nivel in project.get("levels", [])}
+    panels = {panel["id"]: panel for panel in project.get("panels", [])}
+    circuits = {circuito["id"]: circuito for circuito in project.get("circuits", [])}
+
+    supplies = [n for n in nodes if n["type"] == "supply"]
+    if len(supplies) != 1:
+        issues.append(f"network: se esperaba un nodo supply y hay {len(supplies)}")
+
+    nodos_panel: dict[str, list[str]] = {}
+    nodos_carga: dict[str, list[str]] = {}
+    for node in nodes:
+        if node["level"] not in levels:
+            issues.append(
+                f"network: nodo '{node['id']}' con nivel inexistente '{node['level']}'"
+            )
+        tipo = node["type"]
+        ref = node.get("ref")
+        if tipo == "panel":
+            if ref not in panels:
+                issues.append(
+                    f"network: nodo '{node['id']}' referencia un tablero inexistente '{ref}'"
+                )
+            else:
+                nodos_panel.setdefault(ref, []).append(node["id"])
+                if node["level"] != panels[ref]["level"]:
+                    issues.append(
+                        f"network: nodo '{node['id']}' (tablero {ref}) está en nivel "
+                        f"'{node['level']}' y el tablero en '{panels[ref]['level']}'"
+                    )
+        elif tipo == "load":
+            if ref not in circuits:
+                issues.append(
+                    f"network: nodo '{node['id']}' referencia un circuito inexistente '{ref}'"
+                )
+            else:
+                nodos_carga.setdefault(ref, []).append(node["id"])
+
+    for panel_id in panels:
+        nodos = nodos_panel.get(panel_id, [])
+        if not nodos:
+            issues.append(f"network: tablero '{panel_id}' sin nodo panel")
+        elif len(nodos) > 1:
+            issues.append(
+                f"network: tablero '{panel_id}' tiene {len(nodos)} nodos panel"
+            )
+    for circuit_id in circuits:
+        nodos = nodos_carga.get(circuit_id, [])
+        if not nodos:
+            issues.append(f"network: circuito '{circuit_id}' sin nodo load")
+        elif len(nodos) > 1:
+            issues.append(
+                f"network: circuito '{circuit_id}' tiene {len(nodos)} nodos load"
+            )
+
+    for segment in segments:
+        origen = node_map.get(segment["from"])
+        destino = node_map.get(segment["to"])
+        if origen is None or destino is None:
+            faltante = segment["from"] if origen is None else segment["to"]
+            issues.append(
+                f"network: tramo '{segment['id']}' con extremo inexistente '{faltante}'"
+            )
+            continue
+        if segment["from"] == segment["to"]:
+            issues.append(f"network: tramo '{segment['id']}' une un nodo consigo mismo")
+        elif (
+            origen["level"] != destino["level"]
+            and segment["kind"] != "riser"
+        ):
+            issues.append(
+                f"network: tramo '{segment['id']}' une niveles distintos y no es riser"
+            )
+    return issues
+
+
 def reference_issues(project: dict[str, Any]) -> list[str]:
     """Revisa ids únicos y referencias entre elementos."""
     issues: list[str] = []
@@ -53,6 +149,7 @@ def reference_issues(project: dict[str, Any]) -> list[str]:
     for q in project.get("panels", []):
         if q["level"] not in ids["levels"]:
             issues.append(f"panel '{q['id']}': nivel inexistente '{q['level']}'")
+    issues.extend(_network_issues(project))
     return issues
 
 

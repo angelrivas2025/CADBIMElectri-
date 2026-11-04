@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "project": {
     "name": "Casa simple conforme a NBR 5410",
     "norm": "NBR5410",
@@ -48,7 +48,6 @@
       "method": "B1", "length_m": 16, "n_loaded": 2, "material": "Cu", "insulation": "PVC" }
   ],
   "panels": [{ "id": "QD1", "name": "Tablero principal", "level": "N0" }],
-  "routes": [],
   "calc": {},
   "history": [{ "timestamp": "2026-11-03T00:00:00Z", "author": "usuario", "action": "Ejemplo conforme a la previsión mínima NBR 5410 9.5.2; valores didácticos, revisar con profesional." }]
 }

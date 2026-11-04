@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "project": {
     "name": "Casa simple de ejemplo",
     "norm": "NBR5410",
@@ -26,7 +26,6 @@
     { "id": "C3", "name": "TUG cocina", "type": "tug", "panel": "QD1", "phase": "A" }
   ],
   "panels": [{ "id": "QD1", "name": "Tablero principal", "level": "N0" }],
-  "routes": [],
   "calc": {},
   "history": [{ "timestamp": "2026-11-02T00:00:00Z", "author": "usuario", "action": "Ejemplo creado a mano. Valores de ejemplo, no validados por norma." }]
 }
