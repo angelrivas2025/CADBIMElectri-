@@ -7,6 +7,7 @@ from typing import Any
 
 COLUMNAS = [
     "ID",
+    "Cuadro",
     "Circuito",
     "Tipo",
     "Fase",
@@ -31,7 +32,10 @@ def cuadro_csv(
     project: dict[str, Any], informe: dict[str, Any], ruta: str | Path
 ) -> Path:
     dr_por_circuito = (informe.get("protecciones") or {}).get("dr_por_circuito") or {}
-    circuitos = (informe.get("dimensionamiento") or {}).get("circuits") or []
+    circuitos = sorted(
+        (informe.get("dimensionamiento") or {}).get("circuits") or [],
+        key=lambda c: (c.get("panel") or "", c["id"]),
+    )
     destino = Path(ruta)
     destino.parent.mkdir(parents=True, exist_ok=True)
     with destino.open("w", newline="", encoding="utf-8-sig") as archivo:
@@ -41,6 +45,7 @@ def cuadro_csv(
             escritor.writerow(
                 {
                     "ID": c["id"],
+                    "Cuadro": c.get("panel") or "",
                     "Circuito": c["name"],
                     "Tipo": c["type"],
                     "Fase": c.get("phase") or "",

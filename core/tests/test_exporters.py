@@ -50,6 +50,7 @@ def test_csv_tiene_una_fila_por_circuito(tmp_path, proyecto_informe):
         filas = list(csv.DictReader(archivo, delimiter=";"))
     assert len(filas) == 3
     c3 = next(f for f in filas if f["ID"] == "C3")
+    assert c3["Cuadro"] == "QD1"
     assert c3["VA"] == "1900"
     assert c3["DR"] == "Si"
     assert c3["Seccion_mm2"] == "2.5"

@@ -251,18 +251,21 @@ def _cuadro_cargas(pdf: Any, project: dict[str, Any], informe: dict[str, Any]) -
         "Cuadro de cargas",
         "Potencia instalada, corriente de proyecto, sección y protección por circuito.",
     )
-    anchos = [12, 90, 10, 10, 17, 13, 13, 30, 12, 12, 16, 12]
-    alineaciones = ["L", "L", "C", "R", "R", "R", "R", "C", "R", "C", "R", "C"]
+    anchos = [12, 14, 78, 10, 10, 17, 13, 13, 30, 12, 12, 16, 12]
+    alineaciones = ["L", "C", "L", "C", "R", "R", "R", "R", "C", "R", "C", "R", "C"]
     _fila(
         pdf,
-        ["ID", "Circuito", "Fase", "Pts", "VA", "A", "L (m)", "Sección", "In (A)", "Curva", "Caída", "DR"],
+        ["ID", "Tab.", "Circuito", "Fase", "Pts", "VA", "A", "L (m)", "Sección", "In (A)", "Curva", "Caída", "DR"],
         anchos,
         cabecera=True,
         alineaciones=alineaciones,
     )
 
     dr_por_circuito = (informe.get("protecciones") or {}).get("dr_por_circuito") or {}
-    circuitos = (informe.get("dimensionamiento") or {}).get("circuits") or []
+    circuitos = sorted(
+        (informe.get("dimensionamiento") or {}).get("circuits") or [],
+        key=lambda c: (c.get("panel") or "", c["id"]),
+    )
     total_va = 0.0
     for indice, c in enumerate(circuitos):
         total_va += c.get("power_va") or 0
@@ -270,6 +273,7 @@ def _cuadro_cargas(pdf: Any, project: dict[str, Any], informe: dict[str, Any]) -
             pdf,
             [
                 c["id"],
+                c.get("panel") or "-",
                 c["name"],
                 c.get("phase") or "-",
                 c.get("points", 0),
@@ -288,7 +292,7 @@ def _cuadro_cargas(pdf: Any, project: dict[str, Any], informe: dict[str, Any]) -
         )
     _fila(
         pdf,
-        ["", "Total", "", "", _num(total_va, 0), "", "", "", "", "", "", ""],
+        ["", "", "Total", "", "", _num(total_va, 0), "", "", "", "", "", "", ""],
         anchos,
         alineaciones=alineaciones,
     )
