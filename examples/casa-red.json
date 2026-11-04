@@ -13,7 +13,7 @@
       "has_lightning_rod": false,
       "sensitive_equipment": true,
       "icc_ka": 3,
-      "feeder_length_m": 12,
+      "feeder_length_m": 8.84,
       "feeder_method": "D"
     }
   },
@@ -41,16 +41,16 @@
   ],
   "circuits": [
     { "id": "C1", "name": "Iluminación", "type": "iluminacion", "panel": "QD1", "phase": "A",
-      "method": "B1", "length_m": 6.4, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
+      "method": "B1", "length_m": 5.93, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
     { "id": "C2", "name": "TUG sala y dormitorio", "type": "tug", "panel": "QD1", "phase": "A",
-      "method": "B1", "length_m": 9.31, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
+      "method": "B1", "length_m": 8.84, "n_loaded": 2, "material": "Cu", "insulation": "PVC" },
     { "id": "C3", "name": "TUG cocina", "type": "tug", "panel": "QD1", "phase": "B",
-      "method": "B1", "length_m": 8.77, "n_loaded": 2, "material": "Cu", "insulation": "PVC" }
+      "method": "B1", "length_m": 8.3, "n_loaded": 2, "material": "Cu", "insulation": "PVC" }
   ],
   "panels": [{ "id": "QD1", "name": "Tablero principal", "level": "N0" }],
   "network": {
     "nodes": [
-      { "id": "SUP", "type": "supply", "level": "N0", "position": [0.0, 0.0], "height": 1.2 },
+      { "id": "SUP", "type": "supply", "level": "N0", "position": [-6.0, -6.0], "height": 1.2 },
       { "id": "QD1", "type": "panel", "ref": "QD1", "level": "N0", "position": [0.2, 0.3], "height": 1.5 },
       { "id": "J1", "type": "junction", "level": "N0", "position": [2.0, 1.75], "height": 2.4 },
       { "id": "J2", "type": "junction", "level": "N0", "position": [5.75, 1.75], "height": 2.4 },

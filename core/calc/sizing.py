@@ -138,24 +138,33 @@ def opciones_por_defecto(project: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _factores_correccion(aislacion: str, opciones: dict[str, Any]) -> tuple[list[float], list[str]]:
+def _factores_correccion(
+    aislacion: str, opciones: dict[str, Any], agrupados: int | None = None
+) -> tuple[list[float], list[str]]:
     warnings: list[str] = []
     factores = [
         factor_temperatura(opciones["temperatura_c"], aislacion, opciones["ambiente"])
     ]
-    agrupados = opciones["n_circuitos_agrupados"]
+    if agrupados is None:
+        agrupados = opciones["n_circuitos_agrupados"]
+        if agrupados <= 1:
+            warnings.append(
+                "Agrupamiento no declarado: se supone 1 circuito por canalización; "
+                "confirme el número real de circuitos agrupados"
+            )
     if agrupados > 1:
         factores.append(factor_agrupamiento(opciones["disposicion"], agrupados))
-    else:
-        warnings.append(
-            "Agrupamiento no declarado: se supone 1 circuito por canalización; "
-            "confirme el número real de circuitos agrupados"
-        )
     return factores, warnings
 
 
-def dimensionar_proyecto(project: dict[str, Any], opciones: dict[str, Any] | None = None) -> dict[str, Any]:
+def dimensionar_proyecto(
+    project: dict[str, Any],
+    opciones: dict[str, Any] | None = None,
+    red: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Dimensiona los circuitos; `red` aporta longitud y agrupamiento ruteados."""
     opciones = {**opciones_por_defecto(project), **(opciones or {})}
+    red = red or {}
     tension = project["project"]["voltage"]
     corrientes = circuit_currents(project)
     propios = {c["id"]: c for c in project["circuits"]}
@@ -167,14 +176,18 @@ def dimensionar_proyecto(project: dict[str, Any], opciones: dict[str, Any] | Non
             warnings.append(f"Circuito '{c['id']}' sin corriente calculable: no se dimensiona")
             continue
         crudo = propios[c["id"]]
+        ruta = red.get(c["id"]) or {}
+        longitud = ruta["length_m"] if "length_m" in ruta else crudo.get("length_m")
         aislacion = (crudo.get("insulation") or AISLACION_POR_DEFECTO).upper()
         try:
-            factores, avisos = _factores_correccion(aislacion, opciones)
+            factores, avisos = _factores_correccion(
+                aislacion, opciones, agrupados=ruta.get("grouped_circuits")
+            )
             dim = dimensionar_circuito(
                 corriente_a=c["current_a"],
                 n_fases=c["phases"],
                 tension_fase_v=tension,
-                longitud_m=crudo.get("length_m"),
+                longitud_m=longitud,
                 metodo=crudo.get("method") or METODO_POR_DEFECTO,
                 variante=crudo.get("method_variant"),
                 n_loaded=crudo.get("n_loaded"),
@@ -187,7 +200,8 @@ def dimensionar_proyecto(project: dict[str, Any], opciones: dict[str, Any] | Non
         except Exception as e:  # tabla sin la sección pedida, método ambiguo, etc.
             warnings.append(f"Circuito '{c['id']}': {e}")
             continue
-        resultados.append({**c, **dim})
+        origen = "red" if "length_m" in ruta else ("declarada" if longitud is not None else None)
+        resultados.append({**c, **dim, "length_source": origen})
         warnings.extend(f"{c['id']}: {a}" for a in avisos)
         warnings.extend(f"{c['id']}: {w}" for w in dim["warnings"])
 
