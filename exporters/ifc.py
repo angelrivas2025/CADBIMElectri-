@@ -15,6 +15,19 @@ from core.calc.validate import validar_proyecto
 ALTURA_ESPACIO_M = 2.6
 TAMANO_CAJA_M = 0.1
 TAMANO_TABLERO_M = 0.35
+TAMANO_MINIMO_TRAMO_M = 0.01
+
+TIPO_TRAMO_IFC = {
+    "conduit": "CONDUITSEGMENT",
+    "tray": "CABLETRAYSEGMENT",
+    "riser": "CONDUITSEGMENT",
+}
+FLUJO_NODO = {
+    "supply": "SOURCE",
+    "panel": "SOURCEANDSINK",
+    "junction": "SOURCEANDSINK",
+    "load": "SINK",
+}
 
 
 def disponible() -> bool:
@@ -119,13 +132,15 @@ def _representacion_espacio(model: Any, contexto: Any, poligono: list[list[float
     )
 
 
-def _representacion_caja(model: Any, contexto: Any, tamano: float) -> Any:
+def _representacion_bbox(
+    model: Any, contexto: Any, x: float, y: float, z: float
+) -> Any:
     caja = model.create_entity(
         "IfcBoundingBox",
         Corner=_punto(model, 0.0, 0.0, 0.0),
-        XDim=tamano,
-        YDim=tamano,
-        ZDim=tamano,
+        XDim=max(float(x), TAMANO_MINIMO_TRAMO_M),
+        YDim=max(float(y), TAMANO_MINIMO_TRAMO_M),
+        ZDim=max(float(z), TAMANO_MINIMO_TRAMO_M),
     )
     forma = model.create_entity(
         "IfcShapeRepresentation",
@@ -139,11 +154,62 @@ def _representacion_caja(model: Any, contexto: Any, tamano: float) -> Any:
     )
 
 
+def _representacion_caja(model: Any, contexto: Any, tamano: float) -> Any:
+    return _representacion_bbox(model, contexto, tamano, tamano, tamano)
+
+
 def _colocacion(model: Any, relativa_a: Any, x: float, y: float, z: float) -> Any:
     return model.create_entity(
         "IfcLocalPlacement",
         PlacementRelTo=relativa_a,
         RelativePlacement=_eje(model, x, y, z),
+    )
+
+
+def _puerto(
+    model: Any,
+    guid: Any,
+    elemento: Any,
+    flujo: str,
+    x: float = 0.0,
+    y: float = 0.0,
+    z: float = 0.0,
+) -> Any:
+    puerto = model.create_entity(
+        "IfcDistributionPort",
+        GlobalId=guid.new(),
+        OwnerHistory=None,
+        Name=None,
+        Description=None,
+        ObjectType=None,
+        ObjectPlacement=_colocacion(model, elemento.ObjectPlacement, x, y, z),
+        Representation=None,
+        FlowDirection=flujo,
+        PredefinedType="CABLECARRIER",
+        SystemType=None,
+    )
+    model.create_entity(
+        "IfcRelConnectsPortToElement",
+        GlobalId=guid.new(),
+        OwnerHistory=None,
+        Name=None,
+        Description=None,
+        RelatingPort=puerto,
+        RelatedElement=elemento,
+    )
+    return puerto
+
+
+def _conectar(model: Any, guid: Any, puerto_a: Any, puerto_b: Any, elemento: Any) -> None:
+    model.create_entity(
+        "IfcRelConnectsPorts",
+        GlobalId=guid.new(),
+        OwnerHistory=None,
+        Name=None,
+        Description=None,
+        RelatingPort=puerto_a,
+        RelatedPort=puerto_b,
+        RealizingElement=elemento,
     )
 
 
@@ -237,10 +303,14 @@ def modelo_ifc(
         "IfcRelAggregates", GlobalId=guid.new(), OwnerHistory=None, Name=None,
         Description=None, RelatingObject=edificio, RelatedObjects=list(pisos.values()),
     )
+    elevaciones = {
+        nivel["id"]: float(nivel.get("elevation", 0.0)) for nivel in niveles
+    }
 
     rooms = {r["id"]: r for r in project["rooms"]}
     nivel_por_defecto = niveles[0]["id"]
     contenidos: dict[str, list[Any]] = {nivel["id"]: [] for nivel in niveles}
+    espacios_por_nivel: dict[str, list[Any]] = {nivel["id"]: [] for nivel in niveles}
 
     for room in project["rooms"]:
         nivel_id = room.get("level") or nivel_por_defecto
@@ -266,19 +336,41 @@ def modelo_ifc(
             model, guid, espacio, "Pset_CADBIMElectri_Ambiente",
             {"Tipo": room["type"], "Nivel": nivel_id},
         )
-        contenidos[nivel_id if nivel_id in contenidos else nivel_por_defecto].append(espacio)
+        espacios_por_nivel[
+            nivel_id if nivel_id in espacios_por_nivel else nivel_por_defecto
+        ].append(espacio)
+
+    for nivel_id, espacios in espacios_por_nivel.items():
+        if espacios:
+            model.create_entity(
+                "IfcRelAggregates",
+                GlobalId=guid.new(), OwnerHistory=None, Name=None, Description=None,
+                RelatingObject=pisos[nivel_id], RelatedObjects=espacios,
+            )
 
     tableros: dict[str, Any] = {}
+    nodos_red = {
+        nodo["id"]: nodo
+        for nodo in (project.get("network") or {}).get("nodes", [])
+    }
+    nodos_panel = {
+        nodo["ref"]: nodo for nodo in nodos_red.values() if nodo["type"] == "panel"
+    }
     for panel in project["panels"]:
         nivel_id = panel.get("level") or nivel_por_defecto
         piso = pisos.get(nivel_id, pisos[nivel_por_defecto])
-        ubicacion = next(
-            (p for p in project["points"] if p["type"] == "tablero" and p["room"] in rooms),
-            None,
-        )
-        x = float(ubicacion["position"][0]) if ubicacion else 0.0
-        y = float(ubicacion["position"][1]) if ubicacion else 0.0
-        z = float(ubicacion.get("height", 1.5)) if ubicacion else 1.5
+        nodo = nodos_panel.get(panel["id"])
+        if nodo is not None:
+            x, y = (float(v) for v in nodo["position"][:2])
+            z = float(nodo["height"])
+        else:
+            ubicacion = next(
+                (p for p in project["points"] if p["type"] == "tablero" and p["room"] in rooms),
+                None,
+            )
+            x = float(ubicacion["position"][0]) if ubicacion else 0.0
+            y = float(ubicacion["position"][1]) if ubicacion else 0.0
+            z = float(ubicacion.get("height", 1.5)) if ubicacion else 1.5
         tablero = model.create_entity(
             "IfcElectricDistributionBoard",
             GlobalId=guid.new(), OwnerHistory=None, Name=panel["name"],
@@ -335,6 +427,138 @@ def modelo_ifc(
         if circuito:
             elementos_por_circuito.setdefault(circuito, []).append(elemento)
 
+    red = informe.get("red") or {}
+    nodos_ifc: dict[str, Any] = {}
+    tramos_ifc: dict[str, Any] = {}
+    geometria_tramos: dict[str, tuple] = {}
+    if red.get("presente"):
+        for nodo in project["network"]["nodes"]:
+            if nodo["type"] == "panel":
+                tablero = tableros.get(nodo["ref"])
+                if tablero is not None:
+                    nodos_ifc[nodo["id"]] = tablero
+                continue
+            nivel_id = nodo["level"]
+            elemento = model.create_entity(
+                "IfcJunctionBox",
+                GlobalId=guid.new(), OwnerHistory=None, Name=f"Nodo {nodo['id']}",
+                Description=f"Nodo de red: {nodo['type']}", ObjectType=None,
+                ObjectPlacement=_colocacion(
+                    model, pisos.get(nivel_id, pisos[nivel_por_defecto]).ObjectPlacement,
+                    float(nodo["position"][0]), float(nodo["position"][1]),
+                    float(nodo["height"]),
+                ),
+                Representation=_representacion_caja(model, contexto, TAMANO_CAJA_M),
+                Tag=nodo["id"], PredefinedType="POWER",
+            )
+            _pset(
+                model, guid, elemento, "Pset_CADBIMElectri_NodoRed",
+                {
+                    "Tipo": nodo["type"],
+                    "Referencia": nodo.get("ref") or nodo["id"],
+                    "Nivel": nivel_id,
+                    "AlturaM": float(nodo["height"]),
+                },
+            )
+            contenidos[nivel_id if nivel_id in contenidos else nivel_por_defecto].append(elemento)
+            nodos_ifc[nodo["id"]] = elemento
+
+        por_tramo = red.get("por_tramo") or {}
+
+        def _coords(nodo: dict[str, Any]) -> tuple[float, float, float]:
+            return (
+                float(nodo["position"][0]),
+                float(nodo["position"][1]),
+                elevaciones.get(nodo["level"], 0.0) + float(nodo["height"]),
+            )
+
+        for tramo in project["network"]["segments"]:
+            sid = tramo["id"]
+            origen = nodos_red[tramo["from"]]
+            destino = nodos_red[tramo["to"]]
+            puntos = [
+                _coords(origen),
+                *(
+                    (float(p[0]), float(p[1]), float(p[2]))
+                    for p in tramo.get("waypoints") or []
+                ),
+                _coords(destino),
+            ]
+            xs = [p[0] for p in puntos]
+            ys = [p[1] for p in puntos]
+            zs = [p[2] for p in puntos]
+            minimo = (min(xs), min(ys), min(zs))
+            dimensiones = (max(xs) - minimo[0], max(ys) - minimo[1], max(zs) - minimo[2])
+            nivel_id = origen["level"]
+            info = por_tramo.get(sid) or {}
+            elemento = model.create_entity(
+                "IfcCableCarrierSegment",
+                GlobalId=guid.new(), OwnerHistory=None, Name=f"Tramo {sid}",
+                Description=f"{tramo['kind']} {tramo['trade_size']}", ObjectType=None,
+                ObjectPlacement=_colocacion(
+                    model,
+                    pisos.get(nivel_id, pisos[nivel_por_defecto]).ObjectPlacement,
+                    minimo[0],
+                    minimo[1],
+                    minimo[2] - elevaciones.get(nivel_id, 0.0),
+                ),
+                Representation=_representacion_bbox(model, contexto, *dimensiones),
+                Tag=sid, PredefinedType=TIPO_TRAMO_IFC[tramo["kind"]],
+            )
+            _pset(
+                model, guid, elemento, "Pset_CADBIMElectri_Tramo",
+                {
+                    "Identificador": sid,
+                    "Tipo": tramo["kind"],
+                    "MedidaComercial": tramo["trade_size"],
+                    "LongitudM": float(info.get("length_m") or 0.0),
+                    "Circuitos": ", ".join(info.get("circuits") or []),
+                    "NCircuitos": int(info.get("n_circuits") or 0),
+                    "Nivel": nivel_id,
+                },
+            )
+            contenidos[nivel_id if nivel_id in contenidos else nivel_por_defecto].append(elemento)
+            tramos_ifc[sid] = elemento
+            geometria_tramos[sid] = (puntos, minimo)
+
+        for tramo in project["network"]["segments"]:
+            sid = tramo["id"]
+            elemento = tramos_ifc.get(sid)
+            if elemento is None:
+                continue
+            puntos, minimo = geometria_tramos[sid]
+            puertos = {
+                "from": _puerto(
+                    model, guid, elemento, "NOTDEFINED",
+                    puntos[0][0] - minimo[0],
+                    puntos[0][1] - minimo[1],
+                    puntos[0][2] - minimo[2],
+                ),
+                "to": _puerto(
+                    model, guid, elemento, "NOTDEFINED",
+                    puntos[-1][0] - minimo[0],
+                    puntos[-1][1] - minimo[1],
+                    puntos[-1][2] - minimo[2],
+                ),
+            }
+            for extremo, puerto in puertos.items():
+                nodo_id = tramo[extremo]
+                padre = nodos_ifc.get(nodo_id)
+                if padre is None:
+                    continue
+                puerto_nodo = _puerto(
+                    model, guid, padre, FLUJO_NODO[nodos_red[nodo_id]["type"]]
+                )
+                _conectar(model, guid, puerto, puerto_nodo, elemento)
+
+    tramos_por_circuito: dict[str, list[Any]] = {}
+    for cid, recorrido in (red.get("por_circuito") or {}).items():
+        tramos_por_circuito[cid] = [
+            tramos_ifc[sid]
+            for sid in recorrido.get("segments", [])
+            if sid in tramos_ifc
+        ]
+
     circuitos = []
     for circuito in project["circuits"]:
         dim = dimensionado.get(circuito["id"], {})
@@ -359,7 +583,9 @@ def modelo_ifc(
                 "DR_30mA": circuito["id"] in dr_por_circuito,
             },
         )
-        asignados = elementos_por_circuito.get(circuito["id"], [])
+        asignados = elementos_por_circuito.get(circuito["id"], []) + tramos_por_circuito.get(
+            circuito["id"], []
+        )
         if asignados:
             model.create_entity(
                 "IfcRelAssignsToGroup",
@@ -391,15 +617,18 @@ def modelo_ifc(
         )
 
     if informe.get("alimentador"):
+        props_proyecto = {
+            "Norma": project["project"]["norm"],
+            "Sistema": project["project"]["system"],
+            "TensionFN_V": float(project["project"]["voltage"]),
+            "SeccionAlimentador_mm2": float(informe["alimentador"]["section_mm2"]),
+            "DisyuntorGeneralA": int(informe["alimentador"]["breaker_a"]),
+        }
+        if red.get("presente"):
+            props_proyecto["NodosRed"] = len(nodos_ifc)
+            props_proyecto["TramosRed"] = len(tramos_ifc)
         _pset(
-            model, guid, proyecto, "Pset_CADBIMElectri_Proyecto",
-            {
-                "Norma": project["project"]["norm"],
-                "Sistema": project["project"]["system"],
-                "TensionFN_V": float(project["project"]["voltage"]),
-                "SeccionAlimentador_mm2": float(informe["alimentador"]["section_mm2"]),
-                "DisyuntorGeneralA": int(informe["alimentador"]["breaker_a"]),
-            },
+            model, guid, proyecto, "Pset_CADBIMElectri_Proyecto", props_proyecto
         )
 
     destino = Path(ruta)

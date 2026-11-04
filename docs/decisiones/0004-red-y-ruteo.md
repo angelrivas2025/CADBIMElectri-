@@ -112,7 +112,9 @@ automática de trazados y el ruteo 3D con colisiones quedan fuera de esta fase.
 - `core/calc/bom.py`: longitudes de cable desde el ruteo cuando hay red.
 - Exportadores: tablas por cuadro y por tramo en una etapa posterior; el
   informe del validador ya expone los avisos.
-- IFC: nodos y segmentos se mapean a elementos y puertos en la fase 6.
+- IFC: nodos a `IfcJunctionBox`/`IfcElectricDistributionBoard`, segmentos a
+  `IfcCableCarrierSegment` y conectividad con `IfcDistributionPort` y
+  `IfcRelConnectsPorts` (implementado; ver estado 9).
 
 ### 7. Dominio y reutilización para hidráulica
 
@@ -142,7 +144,10 @@ reescribir el motor cuando se agregue água/esgoto.
 - [x] Casos C01–C05 automatizados en `core/tests/test_net.py`.
 - [ ] Tablas de diámetros y límites de ocupación con procedencia verificable
   (norma de producto o catálogo de fabricante). Sin ellas el validador avisa.
-- [ ] Mapeo de nodos y tramos a IFC (puertos y conectividad), fase 6.
+- [x] Mapeo de nodos y tramos a IFC: `IfcJunctionBox` por nodo,
+  `IfcCableCarrierSegment` por tramo, puertos `CABLECARRIER` y conectividad
+  completa; tramos asignados a su circuito. Validado sin errores de reglas
+  EXPRESS (`core/tests/test_ifc.py`).
 
 `validate` agrega la etapa `red` (rutas, longitudes, agrupamiento y ocupación)
 antes del dimensionamiento y devuelve el detalle en la clave `red`.

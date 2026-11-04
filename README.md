@@ -76,8 +76,12 @@ pip install ".[bim]"      # solo IFC
 El modelo IFC4 incluye jerarquía espacial (sitio, edificio, nivel), ambientes
 extruidos, tablero, puntos eléctricos (luminarias, tomas, interruptores) y los
 circuitos como `IfcDistributionCircuit`, con las propiedades de cálculo en
-property sets `Pset_CADBIMElectri_*`. Si falta IfcOpenShell, la CLI omite el IFC
-y lo informa.
+property sets `Pset_CADBIMElectri_*`. Cuando el proyecto declara `network`, cada
+nodo se exporta como `IfcJunctionBox` (o el tablero correspondiente) y cada tramo
+como `IfcCableCarrierSegment`, con puertos `IfcDistributionPort` y conectividad
+`IfcRelConnectsPorts`; los tramos quedan asignados a sus circuitos. El archivo se
+verifica con `ifcopenshell.validate` sin errores de reglas EXPRESS. Si falta
+IfcOpenShell, la CLI omite el IFC y lo informa.
 
 El mismo diagrama alimenta SVG y PDF, así que ambos formatos muestran la misma
 geometría. Ningún dato faltante se completa por estimación: si falta una longitud

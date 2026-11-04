@@ -24,7 +24,7 @@ puente BIM es IFC.
 | --- | --- | --- | --- |
 | Red en árbol | Acometida → cuadros → prumadas → cargas | Grafo explícito con subcuadros y prumadas (esquema 0.2) | Implementado |
 | Subcuadros y prumadas | Sí | Sí, en `network` | Implementado |
-| Asociación red ↔ objetos del modelo | Sí, por símbolos | Parcial (puntos y circuitos) | Fase 6 |
+| Asociación red ↔ objetos del modelo | Sí, por símbolos | Sí: nodos, tramos y puertos IFC asignados a circuitos | Implementado |
 | Ruteo automático de cables | Por conductos, camino más corto | Dijkstra 2.5D sobre conductos declarados | Implementado |
 | Longitudes de cable | Calculadas del ruteo | Calculadas del ruteo | Implementado |
 | Agrupamiento por proximidad | Actualizado al rutear | Calculado por tramo compartido | Implementado |
@@ -35,7 +35,7 @@ puente BIM es IFC.
 | Tabla general de cables | Sí, por tipo de red | Parcial (BOM) | Fase 3.5 |
 | Redes auxiliares | Datos, EVAC/incendio, TV/SAT | No | Post-MVP |
 | Sincronización con cálculo externo | Ampère | No aplica (motor propio) | — |
-| BIM | Revit propietario | IFC4 abierto | Fase 6 |
+| BIM | Revit propietario | IFC4 abierto con nodos, tramos y conectividad | Implementado (validado con IfcOpenShell; falta verificación en visor) |
 
 ## Protocolo de caja negra
 
@@ -82,7 +82,9 @@ Fecha/versión: 2026-11-04 / versión observada
 | C09 | Exportación BIM y lista de cables | Entidades, propiedades y cantidades |
 | C10 | Cambio de potencia en una carga | Propagación y actualización de tablas |
 
-Estado: C01–C05 están automatizados en `core/tests/test_net.py`; C06–C10 siguen
+Estado: C01–C05 están automatizados en `core/tests/test_net.py`; el mapeo IFC de
+C09 (nodos, tramos, propiedades y puertos) está cubierto en
+`core/tests/test_ifc.py`, pero la lista general de cables y C06–C08/C10 siguen
 pendientes.
 
 ### Evidencia y límites
