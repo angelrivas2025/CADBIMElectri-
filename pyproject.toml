@@ -18,6 +18,7 @@ dev = [
 export = ["fpdf2>=2.7,<3", "ifcopenshell>=0.8"]
 bim = ["ifcopenshell>=0.8"]
 api = ["fastapi>=0.110", "uvicorn>=0.29"]
+e2e = ["pytest>=8", "playwright>=1.45"]
 
 [tool.pytest.ini_options]
 testpaths = ["core/tests"]

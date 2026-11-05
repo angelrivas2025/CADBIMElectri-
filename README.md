@@ -116,6 +116,19 @@ necesita `CADBIM_LLM_KEY` en el entorno del servidor; sin clave, el resto del
 editor funciona y el chat responde 503. Ver
 [ADR 0006](docs/decisiones/0006-editor-web.md).
 
+La prueba E2E abre el editor real en Edge o Chrome (escritorio y móvil),
+coloca un punto, deshace, exporta, descarga y vuelve a abrir el proyecto, y
+guarda capturas en `salida/e2e/`:
+
+```bash
+pip install ".[dev,e2e]"
+python -m pytest e2e -q
+```
+
+Si no hay Edge ni Chrome, `python -m playwright install chromium` habilita el
+navegador de Playwright. La suite no forma parte de `pytest` por defecto porque
+necesita un navegador y arranca un servidor propio en un puerto libre.
+
 ## Asistente
 
 La IA no edita el JSON a mano ni calcula: emite llamadas a herramientas con

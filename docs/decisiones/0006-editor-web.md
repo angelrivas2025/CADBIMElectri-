@@ -66,8 +66,11 @@ mismas reglas y que también sea usable desde el teléfono en la red local.
 - El flujo completo (plano, puntos, validación, chat, deshacer, exportación y
   guardar/abrir) queda disponible en el navegador y reutiliza el motor.
 - Sigue siendo un MVP de un solo usuario: no hay autenticación, sesiones
-  múltiples, autosave, edición colaborativa ni pruebas automatizadas de
-  navegador. La lógica de interacción se verificó con inspección del DOM y la API
-  con `fastapi.testclient`; falta una prueba E2E real (Playwright u otra).
+  múltiples, autosave ni edición colaborativa. La API se prueba con
+  `fastapi.testclient` y el flujo real del editor con Playwright en
+  `e2e/test_editor.py` (escritorio y móvil): colocar y deshacer un punto,
+  validar, exportar y servir los archivos, descargar y reabrir el proyecto, y
+  comprobar que no hay errores de página ni desbordes en pantalla pequeña. La
+  suite vive fuera de `testpaths` porque requiere un navegador instalado.
 - Los archivos exportados no se revierten con Deshacer: son artefactos de salida,
   no parte del proyecto.
