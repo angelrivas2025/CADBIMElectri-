@@ -228,14 +228,9 @@ function areaPoligono(poligono) {
   return Math.abs(suma) / 2;
 }
 
-function centroide(poligono) {
-  let x = 0;
-  let y = 0;
-  for (const [px, py] of poligono) {
-    x += px;
-    y += py;
-  }
-  return [x / poligono.length, y / poligono.length];
+function centroHorizontal(poligono) {
+  const xs = poligono.map(([x]) => x);
+  return (Math.min(...xs) + Math.max(...xs)) / 2;
 }
 
 function renderPlano() {
@@ -307,10 +302,11 @@ function renderPlano() {
     poligono.append(titulo);
     svg.append(poligono);
 
-    const [cx, cy] = centroide(ambiente.polygon);
+    const ys = ambiente.polygon.map(([, y]) => y);
+    const base = py(Math.max(...ys)) + tamanoTexto * 1.15;
     const etiqueta = crear("text", {
-      x: px(cx),
-      y: py(cy) - tamanoTexto * 0.15,
+      x: px(centroHorizontal(ambiente.polygon)),
+      y: base,
       class: "nombre-ambiente",
       "font-size": tamanoTexto,
     });
@@ -318,9 +314,9 @@ function renderPlano() {
     svg.append(etiqueta);
 
     const detalle = crear("text", {
-      x: px(cx),
-      y: py(cy) + tamanoTexto * 0.95,
-      class: "nombre-ambiente",
+      x: px(centroHorizontal(ambiente.polygon)),
+      y: base + tamanoTexto * 1.05,
+      class: "nombre-ambiente detalle",
       "font-size": tamanoTexto * 0.72,
       fill: "#71818f",
     });

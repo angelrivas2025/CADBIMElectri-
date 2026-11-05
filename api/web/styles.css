@@ -158,6 +158,10 @@ main {
   background: #fff;
 }
 
+.vista-unifilar img[hidden] {
+  display: none;
+}
+
 .leyenda {
   display: flex;
   flex-wrap: wrap;
@@ -206,10 +210,17 @@ main {
 
 .nombre-ambiente {
   fill: #3d4d5d;
-  font-size: 0.22px;
   font-family: inherit;
   pointer-events: none;
   text-anchor: middle;
+  paint-order: stroke;
+  stroke: #f8fafc;
+  stroke-width: 0.012;
+  stroke-linejoin: round;
+}
+
+.nombre-ambiente.detalle {
+  fill: #71818f;
 }
 
 .punto {
